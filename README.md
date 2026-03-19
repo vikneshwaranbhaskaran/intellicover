@@ -70,8 +70,8 @@ Parametric Triggers (Chennai-centric, expandable)
 1.	Heavy Rainfall / Flood Risk – Rainfall exceeding 50 mm in a 24-hour period (sourced from Weather API)
 2.	Extreme Heat – Sustained temperatures above 38°C for at least 4 peak hours (Weather API)
 3.	Industry Strike / Zone Disruption – Verified sudden local strike or market/zone closure
-
 Technology Platform Developed as a cross-platform mobile application using Flutter for optimal performance, intuitive UX, reliable background processing .
+
 Tech Stack
 •	Frontend: Flutter 
 •	Backend: FastAPI (Python) + PostgreSQL
