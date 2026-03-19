@@ -65,3 +65,25 @@ This system integrates both **supervised** and **unsupervised learning models**.
   * Fake inactivity
   * Suspicious claim patterns
   * Unusual activity
+
+Parametric Triggers (Chennai-centric, expandable)
+1.	Heavy Rainfall / Flood Risk – Rainfall exceeding 50 mm in a 24-hour period (sourced from Weather API)
+2.	Extreme Heat – Sustained temperatures above 38°C for at least 4 peak hours (Weather API)
+3.	Industry Strike / Zone Disruption – Verified sudden local strike or market/zone closure
+
+Technology Platform Developed as a cross-platform mobile application using Flutter for optimal performance, intuitive UX, reliable background processing .
+Tech Stack
+•	Frontend: Flutter 
+•	Backend: FastAPI (Python) + PostgreSQL
+•	AI/ML: Isolation Forest/Regressor + random forest
+•	Integrations: OpenWeatherMap API + Goople Places API
+•	Payments:  Razorpay 
+
+Development plan :
+•  Days 1–7: Project setup (Flutter + Python+ PostgreSQL), onboarding screens, user registration & basic dashboard. 
+•  Days 8–14: OpenWeatherMap API integration, simple AI risk profiling (Python/scikit-learn), dynamic premium calculation, policy purchase (Razorpay test/mock). 
+•  Days 15–23: Background service for hourly trigger checks, parametric triggers logic (rain/heat/strike )
+•  Days 24–31: Auto-claim + instant payout simulation, claim history & dashboard polish, basic fraud checks (GPS + rules). 
+•  Days 32–38: Refine ML model (Chennai weather data), full testing, bug fixes, edge cases. 
+•  Days 39–45: UI polish, README + screenshots, record/upload 2-min demo video,  submission prep.
+
