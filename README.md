@@ -2,14 +2,14 @@
 Description
 
 IntelliCover is an AI-powered parametric insurance platform designed for food delivery partners. It uses real-time environmental data and automated triggers to protect gig workers from income loss caused by external disruptions such as extreme weather conditions.
-⚠️ Problem Statement
+Problem Statement
 Delivery partners working on platforms like Zomato and Swiggy often face income loss due to factors beyond their control, such as:
 Heavy rainfall and floods
 Extreme temperatures
 Industry-wide disruptions
 These events can reduce monthly earnings by 20–30%, with no financial protection available.
 
-💡 Solution Overview
+Solution Overview
 IntelliCover offers a mobile-first parametric insurance system tailored for gig workers.
 Key Features:
 AI-based disruption detection
@@ -70,6 +70,96 @@ Parametric Triggers (Chennai-centric, expandable)
 1.	Heavy Rainfall / Flood Risk – Rainfall exceeding 50 mm in a 24-hour period (sourced from Weather API)
 2.	Extreme Heat – Sustained temperatures above 38°C for at least 4 peak hours (Weather API)
 3.	Industry Strike / Zone Disruption – Verified sudden local strike or market/zone closure
+
+Pricing & Payout Logic (Core Calculation Model)
+
+Core Principle
+
+> “Premiums are risk-based, and payouts are loss-based.”
+
+---
+
+1. Income Stabilization
+
+To ensure fairness and prevent manipulation:
+
+* Avg Weekly Income = (Last 4 weeks income) ÷ 4
+* Daily Income = Avg Weekly Income ÷ 6
+
+---
+
+2. Loss Calculation
+
+
+Base Loss = Daily Income × Disruption Days
+
+
+---
+
+3. Dynamic Payout
+
+Coverage is applied based on selected plan:
+
+* Base Plan → 60%
+* Pro Plan → 70%
+
+
+Covered Loss = Base Loss × Coverage %
+
+
+---
+
+4. Policy Limits
+
+To ensure sustainability:
+
+* Maximum claim days per week are limited
+* Weekly payout is capped based on plan
+
+
+Final Payout = min(Covered Loss, Policy Limits)
+
+
+---
+
+5. Location-Based Pricing (Risk Multiplier)
+
+Premium is adjusted based on location risk:
+
+
+Premium = Base Price × Risk Multiplier
+
+
+* Lower risk → lower premium
+* Higher risk → higher premium
+
+---
+Plans
+
+Base Plan
+
+* ₹79/week (adjusted based on location risk)
+* 60% payout coverage
+* Standard payout limits
+
+---
+
+Pro Plan
+
+* ₹119/week (adjusted based on location risk)
+* 70% payout coverage
+* Extended payout limits
+* Additional disruption coverage
+
+---
+
+System Balance
+
+* Dynamic payouts ensure fair compensation
+* Risk-based pricing ensures sustainability
+* Limits prevent excessive payouts
+
+---
 
 Technology Platform Developed as a cross-platform mobile application using Flutter for optimal performance, intuitive UX, reliable background processing .
 
