@@ -119,9 +119,9 @@ Prevents users from instantly switching to high-risk zones to exploit payouts.
 
 ---
 
- 3. Honor Score System
+ 3. Credibility factor System
 
-Each user is assigned a dynamic **Honor Score (0–100)** based on behavior.
+Each user is assigned a dynamic **Credibility factor  (0–100)** based on behavior.
 
 Score Increases:
 
@@ -224,8 +224,9 @@ Claims are processed based on risk level:
 
 ---
 
-Fraud Detection Workflow
+## 🔁 Fraud Detection Workflow
 
+```
 Claim Triggered
       ↓
 Service Radius Check
@@ -243,4 +244,11 @@ Honor Score Evaluation
 Risk Classification
       ↓
 Approve / Delay / Reject
+```
+
+---
+
+
+
+
 
