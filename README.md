@@ -1,4 +1,4 @@
-# intellicover
+# Intellicover
 Description
 
 IntelliCover is an AI-powered parametric insurance platform designed for food delivery partners. It uses real-time environmental data and automated triggers to protect gig workers from income loss caused by external disruptions such as extreme weather conditions.
@@ -46,8 +46,7 @@ This system integrates both **supervised** and **unsupervised learning models**.
   * User inactivity
   * Duration
 
-1. Random Forest Regressor
-
+Random Forest Regressor
 * Used for **risk prediction and premium calculation**
 * Inputs:
 
@@ -314,7 +313,7 @@ Claims are processed based on risk level:
 
 ---
 
-## 🔁 Fraud Detection Workflow
+ Fraud Detection Workflow
 
 ```
 Claim Triggered
