@@ -203,56 +203,36 @@ async def fetch_live_news(city: str) -> list:
 # Gemini helper — single place to call the LLM and parse JSON from its output
 # ---------------------------------------------------------------------------
 def gemini_json(prompt: str) -> dict | None:
-    """Call Gemini and attempt to return parsed JSON, or None on failure."""
-    global WORKING_MODEL
+    """Call the best model directly for maximum speed."""
     api_key = os.environ.get("GEMINI_API_KEY")
     if not api_key:
-        print("[Gemini Error] No API key found in environment variables!")
+        print("[Gemini Error] No API key found!")
         return None
     
-    # Universal Fallback List - Coordinated for maximum reliability
-    models_to_try = [
-        'gemini-flash-latest', 'gemini-pro-latest', 'gemini-pro', 
-        'gemini-1.5-flash', 'gemini-1.0-pro'
-    ]
-
-    # Speed Optimization: If we have a working model, push it to the top!
-    if WORKING_MODEL and WORKING_MODEL in models_to_try:
-        models_to_try.remove(WORKING_MODEL)
-        models_to_try.insert(0, WORKING_MODEL)
+    # HARDCODED: The single best model for your account
+    model_name = 'gemini-flash-latest'
     
-    last_err = None
-    for model_name in models_to_try:
-        try:
-            print(f"[Gemini] Attempting {model_name}...")
-            model = genai.GenerativeModel(model_name)
-            # Short timeout-like behavior: if it takes too long, we will fail over
-            response = model.generate_content(prompt)
-            
-            if not response or not response.text:
-                continue
+    try:
+        print(f"[Gemini] Instant call to {model_name}...")
+        model = genai.GenerativeModel(model_name)
+        response = model.generate_content(prompt)
+        
+        if not response or not response.text:
+            return None
 
-            text = response.text.strip()
-            # Strip markdown code fences if present
-            if text.startswith("```"):
-                text = text.split("\n", 1)[1] if "\n" in text else text[3:]
-            if text.endswith("```"):
-                text = text.rsplit("```", 1)[0]
-            text = text.strip()
-            
-            # SUCCESS! Set as global working model for future speed
-            if model_name != WORKING_MODEL:
-                print(f"[Speed Upgrade] Locking {model_name} as the primary model.")
-                WORKING_MODEL = model_name
+        text = response.text.strip()
+        # Strip markdown code fences
+        if text.startswith("```"):
+            text = text.split("\n", 1)[1] if "\n" in text else text[3:]
+        if text.endswith("```"):
+            text = text.rsplit("```", 1)[0]
+        text = text.strip()
+        
+        return json.loads(text)
+    except Exception as e:
+        print(f"[Gemini Final Error] {e}")
+        return None
 
-            return json.loads(text)
-        except Exception as e:
-            last_err = e
-            print(f"[Gemini Error with {model_name}] {e}")
-            continue
-            
-    print(f"[Gemini Final Failure] All models failed. Proceeding with fallback logic.")
-    return None
 
 def filter_news_with_nlp(city: str, headlines: list) -> list:
     """Uses Gemini NLP to filter out headlines that are not strictly related to the target city."""
