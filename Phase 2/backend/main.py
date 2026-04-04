@@ -133,6 +133,15 @@ async def fetch_live_news(city: str) -> list:
 # ---------------------------------------------------------------------------
 def gemini_json(prompt: str) -> dict | None:
     """Call Gemini and attempt to return parsed JSON, or None on failure."""
+    api_key = os.environ.get("GEMINI_API_KEY")
+    if not api_key:
+        print("[Gemini Error] No API key found in environment variables!")
+        return None
+    
+    # Masked key for health check
+    masked_key = f"{api_key[:8]}...{api_key[-4:]}" if len(api_key) > 12 else "****"
+    print(f"[Gemini Health] Using API key: {masked_key}")
+
     # List of models to try in order of preference
     models_to_try = ['gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-pro']
     
@@ -153,14 +162,10 @@ def gemini_json(prompt: str) -> dict | None:
         except Exception as e:
             last_err = e
             print(f"[Gemini Error with {model_name}] {e}")
-            # If it's a 404 (model not found), try the next one
-            if "404" in str(e) or "not found" in str(e).lower():
-                continue
-            # If it's a quota error, we stop and return None
-            if "429" in str(e) or "quota" in str(e).lower():
-                return None
+            # Try the next model for ANY error (404, 429, etc.)
+            continue
             
-    print(f"[Gemini Final Failure] {last_err}")
+    print(f"[Gemini Final Failure] All models failed. Last error: {last_err}")
     return None
 
 def filter_news_with_nlp(city: str, headlines: list) -> list:
