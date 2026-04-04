@@ -36,6 +36,33 @@ async def read_index():
         return FileResponse(FRONTEND_PATH)
     return {"detail": "Frontend file not found", "path": FRONTEND_PATH}
 
+@app.get("/api/health")
+async def health_check():
+    """Diagnostic endpoint to check Gemini connectivity and API key status."""
+    api_key = os.environ.get("GEMINI_API_KEY")
+    if not api_key:
+        return {"status": "error", "message": "No API key found in environment variables!"}
+    
+    masked_key = f"{api_key[:8]}...{api_key[-4:]}" if len(api_key) > 12 else "****"
+    
+    # Try a simple "Hello" to test the connection
+    try:
+        model = genai.GenerativeModel('gemini-1.5-flash')
+        response = model.generate_content("hello")
+        return {
+            "status": "success", 
+            "api_key_loaded": "Yes", 
+            "masked_key": masked_key,
+            "gemini_response": response.text.strip()
+        }
+    except Exception as e:
+        return {
+            "status": "error", 
+            "api_key_loaded": "Yes", 
+            "masked_key": masked_key, 
+            "error_detail": str(e)
+        }
+
 DB_PATH = os.environ.get("DATABASE_URL", ".app.db")
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 FRONTEND_PATH = os.path.join(os.path.dirname(BASE_DIR), "index.html")
