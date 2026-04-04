@@ -188,18 +188,23 @@ def gemini_json(prompt: str) -> dict | None:
     masked_key = f"{api_key[:8]}...{api_key[-4:]}" if len(api_key) > 12 else "****"
     print(f"[Gemini Health] Using API key: {masked_key}")
 
-    # Universal Fallback List - Covers local (older) and production (newer) library versions
+    # Universal Fallback List - Coordinated for maximum reliability
     models_to_try = [
-        'gemini-2.0-flash', 'gemini-flash-latest', 'gemini-pro-latest', 
-        'gemini-pro', 'gemini-1.5-flash', 'gemini-1.0-pro'
+        'gemini-flash-latest', 'gemini-pro-latest', 'gemini-pro', 
+        'gemini-1.5-flash', 'gemini-1.0-pro'
     ]
     
     last_err = None
     for model_name in models_to_try:
         try:
-            print(f"[Gemini] Attempting with model: {model_name}")
+            print(f"[Gemini] Attempting {model_name}...")
             model = genai.GenerativeModel(model_name)
+            # Use a fast response for health checks or small prompts
             response = model.generate_content(prompt)
+            
+            if not response or not response.text:
+                continue
+
             text = response.text.strip()
             # Strip markdown code fences if present
             if text.startswith("```"):
@@ -207,14 +212,14 @@ def gemini_json(prompt: str) -> dict | None:
             if text.endswith("```"):
                 text = text.rsplit("```", 1)[0]
             text = text.strip()
+            
             return json.loads(text)
         except Exception as e:
             last_err = e
             print(f"[Gemini Error with {model_name}] {e}")
-            # Try the next model for ANY error
             continue
             
-    print(f"[Gemini Final Failure] All models failed. Last error: {last_err}")
+    print(f"[Gemini Final Failure] All models failed. Proceeding with fallback logic.")
     return None
 
 def filter_news_with_nlp(city: str, headlines: list) -> list:
