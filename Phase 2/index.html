@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>IntelliCover - Protection for Gig Workers</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #007BFF;
+            --primary-dark: #0056b3;
+            --secondary: #00C853;
+            --bg-color: #F4F7F6;
+            --card-bg: #FFFFFF;
+            --text-dark: #1D1D1F;
+            --text-light: #6E6E73;
+            --border-radius: 24px;
+            --shadow-soft: 0 10px 30px rgba(0,0,0,0.05);
+            --gradient-blue: linear-gradient(135deg, #0F62FE, #4A90E2);
+            --gradient-green: linear-gradient(135deg, #00C853, #69F0AE);
+            --danger: #FF3B30;
+            --warning: #FF9500;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: #E2E8F0;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        #app {
+            width: 100%;
+            max-width: 480px;
+            background-color: var(--bg-color);
+            min-height: 100vh;
+            position: relative;
+            box-shadow: 0 0 50px rgba(0,0,0,0.1);
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .view {
+            display: none;
+            padding: 24px;
+            animation: fadeIn 0.3s ease;
+            flex: 1;
+        }
+
+        .view.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Typography */
+        h1 { font-size: 28px; font-weight: 700; color: var(--text-dark); margin-bottom: 8px; }
+        h2 { font-size: 20px; font-weight: 600; color: var(--text-dark); margin-bottom: 16px; }
+        p { font-size: 15px; color: var(--text-light); line-height: 1.5; }
+
+        /* Cards */
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .card-gradient-blue {
+            background: var(--gradient-blue);
+            color: white;
+        }
+        .card-gradient-blue p, .card-gradient-blue h2 { color: white; }
+
+        .card-gradient-green {
+            background: var(--gradient-green);
+            color: white;
+        }
+        .card-gradient-green p, .card-gradient-green h2 { color: white; }
+
+        /* Forms */
+        .form-group { margin-bottom: 16px; }
+        label { display: block; font-size: 14px; font-weight: 500; margin-bottom: 8px; color: var(--text-dark); }
+        input, select {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #E5E5EA;
+            border-radius: 12px;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.2s;
+            background: #FAFAFA;
+        }
+        input:focus, select:focus { border-color: var(--primary); background: #FFF; }
+
+        /* Buttons */
+        .btn {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 16px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.1s, opacity 0.2s;
+            text-align: center;
+        }
+        .btn:active { transform: scale(0.98); }
+        .btn:disabled { opacity: 0.7; cursor: not-allowed; }
+        .btn-primary { background: var(--primary); color: #FFF; box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3); }
+        .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
+
+        /* Dashboard Specifics */
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-top: 12px; }
+        .avatar { width: 44px; height: 44px; border-radius: 22px; background: #D1D5DB; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+        .avatar-container { position: relative; cursor: pointer; }
+        .avatar-dropdown { display: none; position: absolute; top: 50px; right: 0; background: var(--card-bg); border-radius: 16px; padding: 0; box-shadow: 0 10px 30px rgba(0,0,0,0.15); min-width: 220px; z-index: 10; cursor: default; overflow: hidden; }
+        .avatar-dropdown.show { display: block; animation: fadeIn 0.2s ease; }
+        .avatar-dropdown .btn-logout { width: 100%; font-size: 14px; border: none; background: transparent; padding: 12px 16px; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 8px; color: var(--danger); text-align: left; transition: background 0.1s; }
+        .avatar-dropdown .btn-logout:hover { background: #fef2f2; }
+        .profile-pic-wrapper { position: relative; display: inline-flex; margin-bottom: 12px; }
+        .edit-avatar-btn { position: absolute; bottom: 0; right: 0; background: #fff; border-radius: 50%; width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.15); cursor: pointer; color: var(--primary); transition: transform 0.1s; }
+        .edit-avatar-btn:hover { transform: scale(1.1); }
+        
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 8px;
+        }
+
+        .alert-item { display: flex; align-items: center; padding: 12px 0; border-bottom: 1px solid #F3F4F6; }
+        .alert-item:last-child { border-bottom: none; padding-bottom: 0; }
+        .alert-icon { font-size: 24px; margin-right: 16px; width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: #F3F4F6; }
+        .alert-content { flex: 1; }
+        .alert-content h4 { font-size: 15px; color: var(--text-dark); margin-bottom: 2px; }
+        .alert-content p { font-size: 13px; margin: 0; }
+        
+        .badge-covered { font-size: 13px; color: var(--secondary); font-weight: 600; }
+        .badge-uncovered { font-size: 13px; color: var(--danger); font-weight: 600; }
+
+        .btn-group { display: flex; gap: 12px; margin-top: 24px; }
+        .btn-group .btn { flex: 1; padding: 14px; font-size: 14px; }
+
+        /* Plans */
+        .plan-card { border: 2px solid transparent; transition: all 0.2s; position: relative; }
+        .plan-card:hover, .plan-card.selected { border-color: var(--primary); transform: translateY(-2px); }
+        .plan-price { font-size: 24px; font-weight: 700; color: var(--text-dark); margin: 8px 0; }
+        .plan-popular { position: absolute; top: -12px; right: 20px; background: var(--secondary); color: white; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 600; }
+        .plan-features { margin-top: 16px; list-style: none; }
+        .plan-features li { display: flex; align-items: center; font-size: 14px; margin-bottom: 8px; color: var(--text-dark); }
+        .plan-features li::before { content: '✓'; color: var(--secondary); font-weight: bold; margin-right: 8px; }
+
+        /* Success Card specific */
+        .success-icon { font-size: 48px; text-align: center; margin-bottom: 16px; }
+        .amount-large { font-size: 36px; font-weight: 700; text-align: center; margin: 16px 0; }
+
+        /* Top Nav Back button */
+        .nav-back { display: flex; align-items: center; padding: 20px 24px; cursor: pointer; color: var(--text-dark); font-weight: 500; }
+        .nav-back span { margin-right: 8px; font-size: 20px; }
+
+        /* History List */
+        .history-item { display: flex; justify-content: space-between; align-items: center; padding: 16px 0; border-bottom: 1px solid #E5E5EA; }
+        .history-item:last-child { border-bottom: none; }
+        .history-left h4 { font-size: 15px; margin-bottom: 4px; color: var(--text-dark); }
+        .history-left p { font-size: 13px; color: var(--text-light); }
+        .history-right { text-align: right; }
+        .history-right .amount { font-weight: 600; color: var(--secondary); }
+        .history-right .status { font-size: 12px; color: var(--text-light); margin-top: 4px; }
+        
+        .loading-overlay { display: none; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(244,247,246,0.85); align-items: center; justify-content: center; z-index: 100; flex-direction: column; text-align: center; }
+        .spinner { border: 3px solid #E5E5EA; border-top: 3px solid var(--primary); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin-bottom: 16px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+    </style>
+</head>
+<body>
+
+    <div id="app">
+        <!-- Loader -->
+        <div class="loading-overlay" id="loader">
+            <div class="spinner"></div>
+            <p id="loader-text" style="font-weight: 600; color: var(--primary-dark);">Processing...</p>
+        </div>
+
+        <!-- MODULE 1: AUTHENTICATION -->
+        <div class="view active" id="view-login">
+            <div style="text-align: center; margin: 40px 0;">
+                <div style="font-size: 48px; margin-bottom: 16px;">🛡️</div>
+                <h1>IntelliCover</h1>
+                <p>Smart protection for gig workers</p>
+            </div>
+
+            <form id="form-login">
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <input type="tel" name="phone" required placeholder="10-digit mobile number" pattern="[0-9]{10}">
+                </div>
+                <button type="submit" class="btn btn-primary" style="margin-top: 24px;">Login</button>
+                <div style="text-align: center; margin-top: 16px;">
+                    <a href="#" onclick="app.nav('register')" style="color: var(--primary); text-decoration: none; font-size: 14px; font-weight: 500;">New user? Register</a>
+                </div>
+            </form>
+        </div>
+
+        <div class="view" id="view-register">
+            <div style="text-align: center; margin: 40px 0;">
+                <div style="font-size: 48px; margin-bottom: 16px;">🛡️</div>
+                <h1>IntelliCover</h1>
+                <p>Register as a new user</p>
+            </div>
+
+            <form id="form-register">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" name="name" required placeholder="Enter your name">
+                </div>
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <input type="tel" name="phone" required placeholder="10-digit mobile number" pattern="[0-9]{10}">
+                </div>
+                <!-- Detailed Residential Address during Registration -->
+                <div class="form-group">
+                    <label>Detailed Home Address</label>
+                    <textarea name="address" required placeholder="E.g. No 42, 1st Cross, Indiranagar, 560038" rows="2" style="width: 100%; border: 1px solid #E5E5EA; border-radius: 12px; padding: 12px; font-family: inherit; font-size: 15px; resize: none;"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>City</label>
+                    <select name="city" required>
+                        <option value="" disabled selected>Select City</option>
+                        <option value="Chennai">Chennai</option>
+                        <option value="Mumbai">Mumbai</option>
+                        <option value="Bangalore">Bangalore</option>
+                        <option value="Madurai">Madurai</option>
+                        <option value="Trichy">Trichy</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Platform</label>
+                    <select name="platform" required>
+                        <option value="" disabled selected>Select your app</option>
+                        <option value="Swiggy">Swiggy</option>
+                        <option value="Zomato">Zomato</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary" style="margin-top: 24px;">Create Account</button>
+                <div style="text-align: center; margin-top: 16px;">
+                    <a href="#" onclick="app.nav('login')" style="color: var(--text-light); text-decoration: none; font-size: 14px;">Already registered? Login</a>
+                </div>
+            </form>
+        </div>
+
+        <!-- MODULE 2: DASHBOARD -->
+        <div class="view" id="view-dashboard">
+            <div class="header">
+                <div>
+                    <p style="font-size: 13px; margin-bottom: 4px;">Welcome back,</p>
+                    <h1 style="font-size: 22px; margin: 0;" id="dash-name">User</h1>
+                </div>
+                <div class="avatar-container" onclick="document.getElementById('avatar-dropdown').classList.toggle('show')">
+                    <div class="avatar" id="main-avatar" style="background-size: cover; background-position: center; border: 2px solid transparent;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4B5563" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                    </div>
+                    <div id="avatar-dropdown" class="avatar-dropdown" onclick="event.stopPropagation()">
+                        <div style="padding: 24px 16px 16px 16px; text-align: center; border-bottom: 1px solid #E5E5EA;">
+                            <div class="profile-pic-wrapper">
+                                <div id="dropdown-avatar" class="avatar" style="width: 64px; height: 64px; border-radius: 32px; background-size: cover; background-position: center; border: 2px solid transparent; box-shadow: 0 4px 10px rgba(0,0,0,0.1); position: relative; z-index: 1;">
+                                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#8E8E93" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                                </div>
+                                <label class="edit-avatar-btn" style="z-index: 2;">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+                                    <input type="file" style="display: none;" accept="image/*" onchange="app.changeAvatar(this)">
+                                </label>
+                            </div>
+                            <h3 id="dd-name" style="margin: 0; font-size: 16px; color: var(--text-dark); text-transform: capitalize; font-weight: 600;"></h3>
+                            <p style="margin: 6px 0 0 0; font-size: 13px; color: var(--text-light); display: flex; align-items: center; justify-content: center; gap: 4px;">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                                <span id="dd-city"></span>
+                            </p>
+                            <div style="margin-top: 14px;">
+                                <p style="font-size: 11px; color: var(--text-light); margin-bottom: 8px; font-weight: 500;">Choose Avatar</p>
+                                <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
+                                    <div onclick="app.setDefaultAvatar('👷')" style="width: 40px; height: 40px; border-radius: 50%; background: #DBEAFE; display: flex; align-items: center; justify-content: center; font-size: 20px; cursor: pointer; transition: transform 0.15s; border: 2px solid transparent;" onmouseover="this.style.transform='scale(1.15)'" onmouseout="this.style.transform='scale(1)'">👷</div>
+                                    <div onclick="app.setDefaultAvatar('🧑‍💼')" style="width: 40px; height: 40px; border-radius: 50%; background: #FCE7F3; display: flex; align-items: center; justify-content: center; font-size: 20px; cursor: pointer; transition: transform 0.15s; border: 2px solid transparent;" onmouseover="this.style.transform='scale(1.15)'" onmouseout="this.style.transform='scale(1)'">🧑‍💼</div>
+                                    <div onclick="app.setDefaultAvatar('🏍️')" style="width: 40px; height: 40px; border-radius: 50%; background: #D1FAE5; display: flex; align-items: center; justify-content: center; font-size: 20px; cursor: pointer; transition: transform 0.15s; border: 2px solid transparent;" onmouseover="this.style.transform='scale(1.15)'" onmouseout="this.style.transform='scale(1)'">🏍️</div>
+                                    <div onclick="app.setDefaultAvatar('🚴')" style="width: 40px; height: 40px; border-radius: 50%; background: #FEF3C7; display: flex; align-items: center; justify-content: center; font-size: 20px; cursor: pointer; transition: transform 0.15s; border: 2px solid transparent;" onmouseover="this.style.transform='scale(1.15)'" onmouseout="this.style.transform='scale(1)'">🚴</div>
+                                    <div onclick="app.setDefaultAvatar('🛵')" style="width: 40px; height: 40px; border-radius: 50%; background: #EDE9FE; display: flex; align-items: center; justify-content: center; font-size: 20px; cursor: pointer; transition: transform 0.15s; border: 2px solid transparent;" onmouseover="this.style.transform='scale(1.15)'" onmouseout="this.style.transform='scale(1)'">🛵</div>
+                                    <div onclick="app.setDefaultAvatar('🧢')" style="width: 40px; height: 40px; border-radius: 50%; background: #FFE4E6; display: flex; align-items: center; justify-content: center; font-size: 20px; cursor: pointer; transition: transform 0.15s; border: 2px solid transparent;" onmouseover="this.style.transform='scale(1.15)'" onmouseout="this.style.transform='scale(1)'">🧢</div>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="btn btn-logout" onclick="app.logout()">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                            Logout
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Protection Status Card -->
+            <div class="card card-gradient-blue">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                    <div>
+                        <p style="opacity: 0.9; font-size: 14px;">Protection Status</p>
+                        <h2 style="font-size: 24px; margin: 4px 0;" id="dash-plan-name">None</h2>
+                        <div class="status-badge" id="dash-status">✅ Active</div>
+                    </div>
+                </div>
+                <div style="margin-top: 16px; font-size: 13px; opacity: 0.9;">
+                    Valid till: <span id="dash-validity">12 Oct 2026</span>
+                </div>
+            </div>
+
+            <!-- Earnings Protected Card -->
+            <div class="card">
+                <p>Earnings Protected</p>
+                <div style="display: flex; align-items: center; margin-top: 8px;">
+                    <div style="font-size: 32px; font-weight: 700; color: var(--text-dark);" id="dash-earnings">₹0</div>
+                    <div style="margin-left: 12px; background: #E6F4EA; color: #137333; padding: 4px 8px; border-radius: 8px; font-size: 12px; font-weight: 600;">This Month</div>
+                </div>
+            </div>
+
+            <!-- Active Disruption Alerts -->
+            <h2 style="font-size: 16px; margin-top: 24px;">Active Disruption Alerts</h2>
+            <div class="card" style="padding: 12px 20px;">
+                <div class="alert-item">
+                    <div class="alert-icon">🌧️</div>
+                    <div class="alert-content">
+                        <h4>Heavy Rain Alert</h4>
+                        <p style="color: var(--danger);">Active in your area</p>
+                    </div>
+                    <div id="dash-cov-rain"></div>
+                </div>
+                <div class="alert-item">
+                    <div class="alert-icon">🔥</div>
+                    <div class="alert-content">
+                        <h4>Heat Wave Warning</h4>
+                        <p style="color: var(--warning);">Monitoring conditions</p>
+                    </div>
+                    <div id="dash-cov-heat"></div>
+                </div>
+                <div class="alert-item">
+                    <div class="alert-icon">🌫️</div>
+                    <div class="alert-content">
+                        <h4>Severe Pollution</h4>
+                        <p style="color: var(--warning);">AQI > 300</p>
+                    </div>
+                    <div id="dash-cov-pol"></div>
+                </div>
+                <div class="alert-item">
+                    <div class="alert-icon">✊</div>
+                    <div class="alert-content">
+                        <h4>Strike / Protest</h4>
+                        <p style="color: var(--warning);">Crowd density monitored</p>
+                    </div>
+                    <div id="dash-cov-strike"></div>
+                </div>
+            </div>
+            <p style="font-size: 11px; color: var(--text-light); margin-top: 8px; padding: 0 4px;">📍 Disruptions are verified within a 5–10 km radius of your registered location using live APIs.</p>
+
+            <!-- Dynamic Premium -->
+            <div class="card" id="dynamic-premium-card" style="display: none; border: 1px solid #E5E5EA;">
+                <h4 style="margin-bottom: 8px;">⚡ Live Premium Analysis</h4>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <p style="font-size: 13px;"><span id="dyn-type"></span> Risk Level: <b id="dyn-risk">Low</b></p>
+                        <p style="font-size: 12px; color: var(--text-light); text-decoration: line-through;">Base: ₹<span id="dyn-base"></span>/wk</p>
+                        <p style="font-size: 11px; color: var(--text-light); margin-top: 4px;" id="dyn-reason"></p>
+                    </div>
+                    <div style="font-size: 20px; font-weight: 700;" id="dyn-price-display">
+                        ₹<span id="dyn-adjusted"></span>/wk
+                    </div>
+                </div>
+            </div>
+
+            <div class="btn-group">
+                <button class="btn btn-outline" onclick="app.nav('plans')">Upgrade Plan</button>
+                <button class="btn btn-outline" onclick="app.nav('history')">View Claims</button>
+            </div>
+            
+            <button class="btn btn-primary" style="margin-top: 12px;" onclick="app.nav('claim')">Raise Claim</button>
+        </div>
+
+
+        <!-- MODULE 3: POLICY MANAGEMENT -->
+        <div class="view" id="view-plans">
+            <div class="nav-back" onclick="app.nav('dashboard')"><span>←</span> Policies</div>
+            <div style="padding: 0 24px;">
+                <h1>Select Your Plan</h1>
+                <p style="margin-bottom: 24px;">Choose a protection tier that fits your needs.</p>
+
+                <div class="card plan-card" id="plan-card-basic" onclick="app.selectPlanUI(this, 'Basic Plan', 20)">
+                    <h2>Basic Plan</h2>
+                    <div class="plan-price">₹20<span style="font-size: 14px; color: var(--text-light); font-weight: 400;">/week</span></div>
+                    <ul class="plan-features">
+                        <li>Rain protection</li>
+                        <li>3 claims per month</li>
+                    </ul>
+                </div>
+
+                <div class="card plan-card selected" style="border-color: var(--primary);" id="plan-card-standard" onclick="app.selectPlanUI(this, 'Standard Plan', 35)">
+                    <div class="plan-popular">Most Popular</div>
+                    <h2>Standard Plan</h2>
+                    <div class="plan-price">₹35<span style="font-size: 14px; color: var(--text-light); font-weight: 400;">/week</span></div>
+                    <ul class="plan-features">
+                        <li>Rain protection</li>
+                        <li>Heat protection</li>
+                        <li>Strike / protest coverage</li>
+                        <li>3 claims per month</li>
+                    </ul>
+                </div>
+
+                <div class="card plan-card" id="plan-card-premium" onclick="app.selectPlanUI(this, 'Premium Plan', 50)">
+                    <h2>Premium Plan</h2>
+                    <div class="plan-price">₹50<span style="font-size: 14px; color: var(--text-light); font-weight: 400;">/week</span></div>
+                    <ul class="plan-features">
+                        <li>Rain protection</li>
+                        <li>Heat protection</li>
+                        <li>Pollution protection</li>
+                        <li>Strike / protest coverage</li>
+                        <li>3 claims per month</li>
+                    </ul>
+                </div>
+
+                <button class="btn btn-primary" style="margin-top: 16px;" onclick="app.activatePlan()">Activate Plan</button>
+            </div>
+        </div>
+
+        <!-- MODULE 4: CLAIMS MANAGEMENT -->
+        <div class="view" id="view-claim">
+            <div class="nav-back" onclick="app.nav('dashboard')"><span>←</span> Raise Claim</div>
+            <div style="padding: 0 24px;">
+                <h1>New Claim</h1>
+                <p style="margin-bottom: 24px;">Submit details for automated disruption verification.</p>
+
+                <form id="form-claim">
+                    <!-- Detailed Incident Address -->
+                    <div class="form-group" style="background: #F9FAFB; padding: 16px; border-radius: 12px; border: 1px solid #E5E5EA;">
+                        <label style="margin-bottom: 12px; font-weight: 700;">Detailed Incident Address</label>
+                        
+                        <div style="margin-bottom: 12px;">
+                            <label style="font-size: 13px; color: var(--text-light); margin-bottom: 4px;">Street Name / Flat No</label>
+                            <input type="text" name="street" id="claim-street" required placeholder="E.g. No 12, Commercial Street">
+                        </div>
+                        
+                        <div style="display: flex; gap: 12px; margin-bottom: 12px;">
+                            <div style="flex: 2;">
+                                <label style="font-size: 13px; color: var(--text-light); margin-bottom: 4px;">Local Area / Landmark</label>
+                                <input type="text" name="area" id="claim-area" required placeholder="E.g. Near Metro Station">
+                            </div>
+                            <div style="flex: 1;">
+                                <label style="font-size: 13px; color: var(--text-light); margin-bottom: 4px;">Pincode</label>
+                                <input type="number" name="pincode" id="claim-pincode" required placeholder="560001">
+                            </div>
+                        </div>
+
+                        <button type="button" class="btn" style="width: 100%; padding: 12px; background: #E5E5EA; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 14px;" title="Securely fetches your lat/long to auto-fill address" onclick="app.autoFillGPS(this)">
+                            <span>📍</span> Auto-Fill via GPS
+                        </button>
+                        <p style="font-size: 11px; color: var(--text-light); margin-top: 8px; margin-bottom: 0;">ℹ️ Precise address is actively pinged against the 5-Hour Maps Traffic and Local News APIs.</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Disruption Type</label>
+                        <select name="type" id="claim-type" required>
+                            <!-- Dynamically populated based on plan -->
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Date & Time</label>
+                        <input type="datetime-local" name="datetime" required id="claim-datetime">
+                    </div>
+                    
+                    <div id="claims-remaining-card" class="card" style="background: #F0F9FF; margin-top: 16px; border: 1px solid #BAE6FD; box-shadow: none; padding: 12px 16px;">
+                        <p style="font-size: 13px; color: var(--text-dark); margin: 0; font-weight: 500;">📊 Claims this month: <b id="claims-used">0</b> / 3 <span style="font-size: 11px; color: var(--text-light);">(<span id="claims-left">3</span> remaining)</span></p>
+                    </div>
+
+                    <div class="card" style="background: #EBF5FF; margin-top: 12px; border: none; box-shadow: none;">
+                        <p style="font-size: 13px; color: var(--primary-dark); margin: 0;">⚠️ Our AI correlates your claim with real-time weather, pollution, and crowd-density APIs for instant verification.</p>
+                        <p style="font-size: 11px; color: var(--text-light); margin-top: 6px;">📍 Disruptions are only verified within a <b>5–10 km radius</b> of your location.</p>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" style="margin-top: 16px;">Submit Claim</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- MODULE 5: CLAIM RESULT UI -->
+        <div class="view" id="view-claim-result">
+            <div style="padding: 40px 24px; text-align: center;">
+                <div class="card card-gradient-green" style="padding: 40px 20px;">
+                    <div class="success-icon">✨</div>
+                    <h1>Claim Approved!</h1>
+                    <p style="margin-top: 8px;">Automated via AI Verification</p>
+                    
+                    <div class="amount-large" id="result-amount">₹500</div>
+                    <p>Credited to your wallet</p>
+
+                    <div style="margin-top: 32px; text-align: left; background: rgba(0,0,0,0.1); padding: 16px; border-radius: 16px;">
+                        <div style="display: flex; flex-direction: column; margin-bottom: 12px; gap: 4px;">
+                            <span style="font-size: 13px; opacity: 0.9;">Reason</span>
+                            <span style="font-size: 14px; font-weight: 600; line-height: 1.4;" id="result-reason">Heavy rain detected</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="font-size: 13px; opacity: 0.9;">Date & Time</span>
+                            <span style="font-size: 14px; font-weight: 600;" id="result-time">Just now</span>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn btn-outline" style="margin-top: 24px;" onclick="app.nav('dashboard')">Back to Dashboard</button>
+            </div>
+        </div>
+
+        <!-- MODULE 6: CLAIM HISTORY -->
+        <div class="view" id="view-history">
+            <div class="nav-back" onclick="app.nav('dashboard')"><span>←</span> Claim History</div>
+            <div style="padding: 0 24px;">
+                <h1>Recent Claims</h1>
+                <div class="card" style="margin-top: 24px; padding: 0 20px;" id="claims-list-container">
+                    <!-- Javascript populates this dynamically -->
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Application Logic -->
+    <script>
+        // Central API Config
+        const API = {
+            BASE_URL: "/api",
+            LOGIN: "/login",
+            REGISTER: "/register",
+            PLAN: "/select-plan",
+            CLAIM: "/claim",
+            CLAIMS_HISTORY: "/claims",
+            PREMIUM: "/premium"
+        };
+        
+        const CITY_LOCATIONS = {
+            "Chennai": ["T. Nagar", "Velachery", "Anna Nagar"],
+            "Mumbai": ["Powai", "BKC", "Andheri"],
+            "Bangalore": ["Whitefield", "Indiranagar", "BTM"],
+            "Madurai": ["KK Nagar", "Mattuthavani"],
+            "Trichy": ["Srirangam", "Thillai Nagar"]
+        };
+
+        const APPROVAL_PATTERN = [
+            { s: 'Approved', a: 500 },
+            { s: 'Approved', a: 350 },
+            { s: 'Rejected', a: 0 },
+            { s: 'Approved', a: 500 },
+            { s: 'Approved', a: 350 },
+            { s: 'Rejected', a: 0 },
+            { s: 'Rejected', a: 0 }
+        ];
+
+        const iconsMap = { 'Heavy Rain': '🌧️', 'Heatwave': '🔥', 'Pollution': '🌫️', 'Strike': '✊' };
+
+        const app = {
+            // Extended state structure
+            state: {
+                user_id: null,
+                user: null,
+                city: null,
+                plan: null,
+                premium: null,
+                plan_start_date: null,
+                isLoggedIn: false,
+                selectedPlanTmp: 'Standard Plan',
+                claims: [],
+                claimCount: 0
+            },
+            
+            async nav(viewId) {
+                document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+                document.getElementById(`view-${viewId}`).classList.add('active');
+                window.scrollTo(0, 0);
+
+                if (viewId === 'dashboard') {
+                    await this.fetchClaims();
+                    await this.fetchPremium();
+                    this.renderDashboard();
+                }
+                if (viewId === 'claim') this.setupClaimForm();
+                if (viewId === 'history') {
+                    await this.fetchClaims();
+                    this.renderClaimsHistory();
+                }
+            },
+
+            logout() {
+                document.getElementById('avatar-dropdown').classList.remove('show');
+                this.state = { user_id: null, user: null, city: null, plan: null, premium: null, plan_start_date: null, isLoggedIn: false, selectedPlanTmp: 'Standard Plan', claims: [], claimCount: 0 };
+                // Reset to default avatar
+                document.getElementById('main-avatar').style.backgroundImage = 'none';
+                document.getElementById('dropdown-avatar').style.backgroundImage = 'none';
+                document.getElementById('main-avatar').innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4B5563" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>';
+                document.getElementById('dropdown-avatar').innerHTML = '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#8E8E93" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>';
+                
+                this.nav('login');
+            },
+
+            setDefaultAvatar(emoji) {
+                const mainAvatar = document.getElementById('main-avatar');
+                const ddAvatar = document.getElementById('dropdown-avatar');
+                mainAvatar.innerHTML = '';
+                ddAvatar.innerHTML = '';
+                mainAvatar.style.backgroundImage = 'none';
+                ddAvatar.style.backgroundImage = 'none';
+                mainAvatar.style.borderColor = 'var(--primary)';
+                ddAvatar.style.borderColor = 'var(--primary)';
+                mainAvatar.style.fontSize = '22px';
+                ddAvatar.style.fontSize = '32px';
+                mainAvatar.innerText = emoji;
+                ddAvatar.innerText = emoji;
+            },
+
+            changeAvatar(input) {
+                if (input.files && input.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const imgUrl = e.target.result;
+                        const mainAvatar = document.getElementById('main-avatar');
+                        const ddAvatar = document.getElementById('dropdown-avatar');
+                        
+                        // Clear the SVGs inside
+                        mainAvatar.innerHTML = '';
+                        ddAvatar.innerHTML = '';
+                        
+                        // Set background Image
+                        const styleStr = `url(${imgUrl})`;
+                        mainAvatar.style.backgroundImage = styleStr;
+                        mainAvatar.style.borderColor = 'var(--primary)';
+                        
+                        ddAvatar.style.backgroundImage = styleStr;
+                        ddAvatar.style.borderColor = 'var(--primary)';
+                    };
+                    reader.readAsDataURL(input.files[0]);
+                }
+            },
+
+            showLoader(text = "Processing...") {
+                document.getElementById('loader-text').innerText = text;
+                document.getElementById('loader').style.display = 'flex';
+            },
+            
+            hideLoader() {
+                document.getElementById('loader').style.display = 'none';
+            },
+
+            // ===== TEAM 1: AUTH MODULE + POLICY MODULE =====
+            async register(e) {
+                e.preventDefault();
+                this.showLoader("Creating account...");
+                
+                const formData = new FormData(e.target);
+                const payload = Object.fromEntries(formData.entries());
+                
+                try {
+                    const res = await fetch(API.BASE_URL + API.REGISTER, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(payload)
+                    });
+                    if (!res.ok) {
+                        const err = await res.json();
+                        throw new Error(err.detail || "API not available");
+                    }
+                    const data = await res.json();
+                    
+                    this.state.user_id = data.user_id;
+                    this.state.user = payload.name;
+                    this.state.city = payload.city;
+                    this.state.isLoggedIn = true;
+                    
+                    document.getElementById('dash-name').innerText = this.state.user;
+                    this.hideLoader();
+                    this.nav('dashboard');
+                } catch (err) {
+                    this.hideLoader();
+                    alert("Registration failed: " + err.message);
+                }
+            },
+
+            async login(e) {
+                e.preventDefault();
+                this.showLoader("Checking user...");
+                
+                const formData = new FormData(e.target);
+                const payload = Object.fromEntries(formData.entries());
+
+                try {
+                    const res = await fetch(API.BASE_URL + API.LOGIN, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(payload)
+                    });
+                    if (!res.ok) {
+                        const err = await res.json();
+                        throw new Error(err.detail || "User not registered");
+                    }
+                    const data = await res.json();
+                    
+                    this.state.user_id = data.user_id;
+                    this.state.user = data.name;
+                    this.state.city = data.city;
+                    this.state.plan = data.plan;
+                    this.state.premium = data.premium;
+                    this.state.isLoggedIn = true;
+                    
+                    document.getElementById('dash-name').innerText = this.state.user;
+                    if(this.state.plan) {
+                        document.getElementById('dash-plan-name').innerText = this.state.plan;
+                    }
+                    this.hideLoader();
+                    this.nav('dashboard');
+                } catch (err) {
+                    this.hideLoader();
+                    alert("Login failed: " + err.message);
+                }
+            },
+
+            selectPlanUI(element, planName, price) {
+                document.querySelectorAll('.plan-card').forEach(el => el.classList.remove('selected', 'border-primary'));
+                document.querySelectorAll('.plan-card').forEach(el => el.style.borderColor = 'transparent');
+                element.classList.add('selected');
+                element.style.borderColor = 'var(--primary)';
+                this.state.selectedPlanTmp = planName;
+            },
+
+            async activatePlan() {
+                this.showLoader("Activating policy...");
+                const amountMap = { 'Basic Plan': 20, 'Standard Plan': 35, 'Premium Plan': 50 };
+                const selectedPremium = amountMap[this.state.selectedPlanTmp];
+                
+                const payload = {
+                    user_id: this.state.user_id,
+                    plan: this.state.selectedPlanTmp,
+                    premium: selectedPremium
+                };
+
+                try {
+                    const res = await fetch(API.BASE_URL + API.PLAN, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(payload)
+                    });
+                    if (!res.ok) throw new Error("API fail");
+                    
+                    this.state.plan = this.state.selectedPlanTmp;
+                    this.state.premium = selectedPremium;
+                    this.state.plan_start_date = new Date().toISOString();
+                    document.getElementById('dash-plan-name').innerText = this.state.plan;
+                    
+                    this.hideLoader();
+                    this.nav('dashboard');
+                } catch (err) {
+                    this.hideLoader();
+                    alert("Plan activation failed");
+                }
+            },
+
+            // ===== TEAM 2: PREMIUM AI MODULE =====
+            async fetchPremium() {
+                this.showLoader("Analyzing risk...");
+                
+                try {
+                    const res = await fetch(API.BASE_URL + API.PREMIUM + "?user_id=" + this.state.user_id);
+                    if (!res.ok) throw new Error("API fail");
+                    const data = await res.json();
+                    
+                    // Render premium from backend
+                    this.renderDynamicPremium(data);
+                    this.hideLoader();
+                } catch (err) {
+                    this.hideLoader();
+                    console.error("Failed to fetch premium from API");
+                }
+            },
+            
+            renderDynamicPremium(data) {
+                const card = document.getElementById('dynamic-premium-card');
+                const priceEl = document.getElementById('dyn-price-display');
+                card.style.display = 'block';
+                document.getElementById('dyn-type').innerText = data.type || 'None';
+                document.getElementById('dyn-risk').innerText = data.risk;
+                document.getElementById('dyn-base').innerText = data.base;
+                document.getElementById('dyn-adjusted').innerText = data.adjusted;
+                document.getElementById('dyn-reason').innerText = data.reason || '';
+
+                if (data.adjusted > data.base) {
+                    card.style.background = '#FFF9E6';
+                    card.style.borderColor = '#FDE68A';
+                    priceEl.style.color = 'var(--danger)';
+                } else if (data.adjusted < data.base) {
+                    card.style.background = '#E6F9EE';
+                    card.style.borderColor = '#A7F3D0';
+                    priceEl.style.color = 'var(--secondary)';
+                } else {
+                    card.style.background = '#EBF5FF';
+                    card.style.borderColor = '#93C5FD';
+                    priceEl.style.color = 'var(--primary)';
+                }
+            },
+
+            // ===== TEAM 3: CLAIM MODULE =====
+            async fetchClaims() {
+                try {
+                    const res = await fetch(API.BASE_URL + API.CLAIMS_HISTORY + "?user_id=" + this.state.user_id);
+                    if (!res.ok) throw new Error("API fail");
+                    const data = await res.json();
+                    this.state.claims = data;
+                } catch (err) {
+                    // Fallback: Using local state in demo mode
+                }
+            },
+
+            async submitClaim(e) {
+                e.preventDefault();
+                
+                const formData = new FormData(e.target);
+                const payload = Object.fromEntries(formData.entries());
+
+                // Combine detailed address pieces into the location string
+                const street = payload.street || '';
+                const area = payload.area || '';
+                const pincode = payload.pincode || '';
+                const fullLocation = `${street}, ${area} - ${pincode}`;
+
+                const backendPayload = {
+                    user_id: this.state.user_id,
+                    type: payload.type,
+                    location: fullLocation,
+                    datetime: payload.datetime,
+                    city: this.state.city
+                };
+
+                const newClaim = {
+                    id: Date.now(),
+                    type: payload.type,
+                    location: fullLocation,
+                    datetime: payload.datetime,
+                    status: 'Pending',
+                    amount: 0
+                };
+                
+                // Add to history array sequentially
+                this.state.claims.unshift(newClaim);
+
+                this.nav('history');
+                this.showLoader("AI verifying disruption...");
+                
+                try {
+                    const res = await fetch(API.BASE_URL + API.CLAIM, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(backendPayload)
+                    });
+                    if (!res.ok) throw new Error("API fail");
+                    
+                    // Consume the exact JSON object from your friend's backend!
+                    const outcome = await res.json();
+                    
+                    // Proceed with brief AI artificial delay for UX (shows 'verifying' state)
+                    setTimeout(() => {
+                        this.hideLoader();
+                        
+                        // We use the exact status returned from the backend (or default to 'Approved')
+                        newClaim.status = outcome.status || 'Approved';
+                        this.renderClaimsHistory(); 
+
+                        if (newClaim.status === 'Approved') {
+                            newClaim.amount = outcome.amount || 0;
+                            this.renderClaimsHistory(); 
+                            
+                            // Use backend reason or fallback
+                            document.getElementById('result-reason').innerText = outcome.reason || (newClaim.type + ' verified');
+                            const time = new Date(newClaim.datetime).toLocaleString();
+                            document.getElementById('result-time').innerText = time || 'Just now';
+                            document.getElementById('result-amount').innerText = '₹' + newClaim.amount;
+                            
+                            // Navigate to claim success view
+                            document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+                            document.getElementById('view-claim-result').classList.add('active');
+                            window.scrollTo(0, 0);
+                        } else {
+                            // If backend rejected it, stay on history view showing 'Rejected'
+                            this.nav('history');
+                        }
+                    }, 2500); // 2.5 second AI verification wait time
+                } catch (err) {
+                    this.hideLoader();
+                    alert("Claim validation failed. Make sure backend is running.");
+                }
+            },
+
+            // --- VIEW RENDERERS ---
+            renderDashboard() {
+                if(this.state.user) document.getElementById('dd-name').innerText = this.state.user;
+                if(this.state.city) document.getElementById('dd-city').innerText = this.state.city;
+                
+                const plan = this.state.plan;
+                if(plan) {
+                    document.getElementById('dash-plan-name').innerText = plan;
+                }
+
+                // Calculate Valid Till = plan start date + 7 days
+                if (this.state.plan_start_date) {
+                    const start = new Date(this.state.plan_start_date);
+                    const validTill = new Date(start.getTime() + 7 * 24 * 60 * 60 * 1000);
+                    const options = { day: 'numeric', month: 'short', year: 'numeric' };
+                    document.getElementById('dash-validity').innerText = validTill.toLocaleDateString('en-IN', options);
+                } else if (plan) {
+                    // Fallback: if no start date stored, use today + 7 days
+                    const validTill = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+                    const options = { day: 'numeric', month: 'short', year: 'numeric' };
+                    document.getElementById('dash-validity').innerText = validTill.toLocaleDateString('en-IN', options);
+                } else {
+                    document.getElementById('dash-validity').innerText = 'No active plan';
+                }
+                
+                const badges = {
+                    rain: { covered: true },
+                    heat: { covered: plan === 'Standard Plan' || plan === 'Premium Plan' },
+                    pol: { covered: plan === 'Premium Plan' },
+                    strike: { covered: plan === 'Standard Plan' || plan === 'Premium Plan' }
+                };
+
+                const setBadge = (id, isCovered) => {
+                    const el = document.getElementById(id);
+                    if (isCovered) {
+                        el.className = 'badge-covered';
+                        el.innerText = 'Covered';
+                    } else {
+                        el.className = 'badge-uncovered';
+                        el.innerText = 'Not Covered';
+                    }
+                };
+
+                setBadge('dash-cov-rain', badges.rain.covered);
+                setBadge('dash-cov-heat', badges.heat.covered);
+                setBadge('dash-cov-pol', badges.pol.covered);
+                setBadge('dash-cov-strike', badges.strike.covered);
+
+                const total = this.state.claims
+                    .filter(c => c.status === 'Approved')
+                    .reduce((sum, c) => sum + c.amount, 0);
+                document.getElementById('dash-earnings').innerText = '₹' + total;
+            },
+
+            async autoFillGPS(btn) {
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '<span>⏳</span> Locating...';
+                btn.disabled = true;
+
+                if (!navigator.geolocation) {
+                    alert('Geolocation is not supported by your browser.');
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                    return;
+                }
+
+                navigator.geolocation.getCurrentPosition(async (position) => {
+                    try {
+                        const lat = position.coords.latitude;
+                        const lon = position.coords.longitude;
+                        // Use Nominatim Reverse Geocoding (Free open-source Maps Data)
+                        const res = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`);
+                        const data = await res.json();
+                        
+                        // Extract address parts securely
+                        const ad = data.address || {};
+                        const road = ad.road || ad.pedestrian || ad.suburb || 'Your Street';
+                        const area = ad.neighbourhood || ad.suburb || ad.city_district || ad.city || 'Your Local Area';
+                        const zip = ad.postcode || '000000';
+                        
+                        document.getElementById('claim-street').value = road;
+                        document.getElementById('claim-area').value = area;
+                        document.getElementById('claim-pincode').value = zip;
+
+                        btn.innerHTML = '<span>✅</span> GPS Synced';
+                    } catch (err) {
+                        console.error(err);
+                        alert('API Fetch failed. Ensure you have internet access.');
+                        btn.innerHTML = originalText;
+                    } finally {
+                        btn.disabled = false;
+                        setTimeout(() => btn.innerHTML = originalText, 4000);
+                    }
+                }, (err) => {
+                    alert('GPS permission denied or unavailable. Please enable Location Services.');
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                });
+            },
+
+            setupClaimForm() {
+                const now = new Date();
+                now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+                document.getElementById('claim-datetime').value = now.toISOString().slice(0,16);
+
+                const locs = CITY_LOCATIONS[this.state.city] || ["Central Zone"];
+                document.getElementById('claim-area').value = locs[0];
+                document.getElementById('claim-pincode').value = "600001"; // Fallback demo pincode
+
+                // Claims used this month
+                const thisMonth = new Date().getMonth();
+                const thisYear = new Date().getFullYear();
+                const monthClaims = this.state.claims.filter(c => {
+                    const d = new Date(c.datetime);
+                    return d.getMonth() === thisMonth && d.getFullYear() === thisYear;
+                }).length;
+                document.getElementById('claims-used').innerText = monthClaims;
+                document.getElementById('claims-left').innerText = Math.max(0, 3 - monthClaims);
+
+                const select = document.getElementById('claim-type');
+                select.innerHTML = '<option value="" disabled selected>Select disruption</option>';
+                select.innerHTML += '<option value="Heavy Rain">🌧️ Heavy Rain</option>';
+                
+                if (this.state.plan === 'Standard Plan' || this.state.plan === 'Premium Plan') {
+                    select.innerHTML += '<option value="Heatwave">🔥 Heatwave</option>';
+                    select.innerHTML += '<option value="Strike">✊ Strike / Protest</option>';
+                }
+                if (this.state.plan === 'Premium Plan') {
+                    select.innerHTML += '<option value="Pollution">🌫️ Pollution</option>';
+                }
+            },
+
+            renderClaimsHistory() {
+                const container = document.getElementById('claims-list-container');
+                if (this.state.claims.length === 0) {
+                    container.innerHTML = '<p style="text-align: center; color: var(--text-light); padding: 20px;">No claims recorded.</p>';
+                    return;
+                }
+
+                container.innerHTML = this.state.claims.map(claim => {
+                    const statusColor = claim.status === 'Approved' ? 'var(--secondary)' : 
+                                      claim.status === 'Pending' ? 'var(--warning)' : 
+                                      'var(--danger)';
+                    const amtStr = claim.amount > 0 ? '+₹' + claim.amount : '-';
+                    const amtStyle = claim.status === 'Rejected' || claim.status === 'Pending' ? 'color: var(--text-light);' : '';
+
+                    return `
+                    <div class="history-item" style="flex-direction: column; align-items: stretch; gap: 12px; padding: 20px 0;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div class="history-left">
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <span style="font-size: 20px;">${iconsMap[claim.type] || '❓'}</span>
+                                    <h4>${claim.type}</h4>
+                                </div>
+                                <p>${new Date(claim.datetime).toLocaleDateString()} • ${claim.location}</p>
+                            </div>
+                            <div class="history-right">
+                                <div class="amount" style="${amtStyle}">${amtStr}</div>
+                                <div class="status" style="color: ${statusColor}; font-weight: 600;">${claim.status}</div>
+                            </div>
+                        </div>
+                        ${claim.reason ? `
+                        <div style="font-size: 13px; color: var(--text-dark); background: #F9FAFB; padding: 12px; border-radius: 8px; border-left: 3px solid ${statusColor}; line-height: 1.4;">
+                            ${claim.reason}
+                        </div>
+                        ` : ''}
+                    </div>`;
+                }).join('');
+            }
+        };
+
+        // Attach Event Listeners
+        document.getElementById('form-login').addEventListener('submit', (e) => app.login(e));
+        document.getElementById('form-register').addEventListener('submit', (e) => app.register(e));
+        document.getElementById('form-claim').addEventListener('submit', (e) => app.submitClaim(e));
+
+    </script>
+</body>
+</html>
