@@ -55,7 +55,7 @@ async def health_check():
         available_models = [f"Failed to list models: {str(e)}"]
 
     # Try multiple models to find a working one for this API version
-    models_to_test = ['gemini-pro', 'gemini-1.5-flash', 'gemini-1.0-pro']
+    models_to_test = ['gemini-2.0-flash', 'gemini-flash-latest', 'gemini-pro-latest', 'gemini-pro']
     errors = {}
     
     for model_name in models_to_test:
@@ -189,7 +189,7 @@ def gemini_json(prompt: str) -> dict | None:
     print(f"[Gemini Health] Using API key: {masked_key}")
 
     # List of models to try in order of preference (Compatibility first)
-    models_to_try = ['gemini-pro', 'gemini-1.5-flash', 'gemini-1.0-pro']
+    models_to_try = ['gemini-2.0-flash', 'gemini-flash-latest', 'gemini-pro-latest', 'gemini-pro']
     
     last_err = None
     for model_name in models_to_try:
