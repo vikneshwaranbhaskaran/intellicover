@@ -45,6 +45,15 @@ async def health_check():
     
     masked_key = f"{api_key[:8]}...{api_key[-4:]}" if len(api_key) > 12 else "****"
     
+    # List all models available for this key
+    available_models = []
+    try:
+        for m in genai.list_models():
+            if 'generateContent' in m.supported_generation_methods:
+                available_models.append(m.name)
+    except Exception as e:
+        available_models = [f"Failed to list models: {str(e)}"]
+
     # Try multiple models to find a working one for this API version
     models_to_test = ['gemini-pro', 'gemini-1.5-flash', 'gemini-1.0-pro']
     errors = {}
@@ -56,6 +65,7 @@ async def health_check():
             return {
                 "status": "success", 
                 "working_model": model_name,
+                "available_models": available_models,
                 "api_key_loaded": "Yes", 
                 "masked_key": masked_key,
                 "gemini_response": response.text.strip()
@@ -65,10 +75,11 @@ async def health_check():
             
     return {
         "status": "error", 
+        "available_models": available_models,
         "api_key_loaded": "Yes", 
         "masked_key": masked_key, 
         "errors": errors,
-        "advice": "All models failed. Check if Gemini API is enabled in your Google AI Studio / Google Cloud Project."
+        "advice": "All models failed. If available_models is empty, your API key project needs 'Generative Language API' enabled in Google Cloud Console."
     }
 
 DB_PATH = os.environ.get("DATABASE_URL", ".app.db")
