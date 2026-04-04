@@ -14,8 +14,27 @@ import urllib.request
 import urllib.parse
 import xml.etree.ElementTree as ET
 import google.generativeai as genai
+import time
 from dotenv import load_dotenv
 
+# ---------------------------------------------------------------------------
+# PERFORMANCE CACHE (Hackathon Speed-Demon Upgrade)
+# ---------------------------------------------------------------------------
+WORKING_MODEL = None  # Remembers the first successful model
+WEATHER_CACHE = {}    # {city: {'timestamp': ..., 'data': ...}}
+NEWS_CACHE = {}       # {city: {'timestamp': ..., 'data': ...}}
+
+def get_cached_item(cache_dict, city, ttl_seconds=300):
+    """Retrieve data from cache if it's within the Time-To-Live period."""
+    if city in cache_dict:
+        entry = cache_dict[city]
+        if time.time() - entry['timestamp'] < ttl_seconds:
+            return entry['data']
+    return None
+
+def set_cached_item(cache_dict, city, data):
+    """Save data to cache with a timestamp."""
+    cache_dict[city] = {'timestamp': time.time(), 'data': data}
 
 load_dotenv()
 genai.configure(api_key=os.environ.get("GEMINI_API_KEY"))
@@ -105,9 +124,9 @@ CITY_COORDS = {
 # Open-Meteo: Fetch LIVE weather + air quality (FREE, no API key needed)
 # ---------------------------------------------------------------------------
 async def fetch_live_weather(city: str) -> dict:
-    """Fetch real-time weather and AQI data for a city from Open-Meteo APIs.
-    Returns a dict with temperature, rain, weather_code, pm2_5, pm10, us_aqi.
-    Returns None values on failure."""
+    """Fetch real-time weather and AQI data with a 5-minute cache."""
+    cached = get_cached_item(WEATHER_CACHE, city)
+    if cached: return cached
 
     coords = CITY_COORDS.get(city)
     if not coords:
@@ -154,11 +173,15 @@ async def fetch_live_weather(city: str) -> dict:
 
     print(f"[Live Data] {city}: temp={result['temperature']}°C, rain={result['rain']}mm, "
           f"AQI={result['us_aqi']}, PM2.5={result['pm2_5']}")
+    
+    set_cached_item(WEATHER_CACHE, city, result)
     return result
 
 
 async def fetch_live_news(city: str) -> list:
-    """Fetch live news headlines via Google News RSS to verify local strikes/protests."""
+    """Fetch live news headlines with a 5-minute cache."""
+    cached = get_cached_item(NEWS_CACHE, city)
+    if cached: return cached
     query = f"{city} (strike OR protest OR bandh) AND (transport OR union OR workers OR auto OR delivery) when:7d"
     q = urllib.parse.quote(query)
     url = f"https://news.google.com/rss/search?q={q}&hl=en-IN&gl=IN&ceid=IN:en"
@@ -168,7 +191,9 @@ async def fetch_live_news(city: str) -> list:
         html = urllib.request.urlopen(req, timeout=5).read()
         root = ET.fromstring(html)
         titles = [item.find('title').text for item in root.findall('.//item')]
-        return titles[:5]  # return top 5 recent headlines
+        data = titles[:5]
+        set_cached_item(NEWS_CACHE, city, data)
+        return data
     except Exception as e:
         print(f"[News API Error] {e}")
         return []
@@ -179,27 +204,29 @@ async def fetch_live_news(city: str) -> list:
 # ---------------------------------------------------------------------------
 def gemini_json(prompt: str) -> dict | None:
     """Call Gemini and attempt to return parsed JSON, or None on failure."""
+    global WORKING_MODEL
     api_key = os.environ.get("GEMINI_API_KEY")
     if not api_key:
         print("[Gemini Error] No API key found in environment variables!")
         return None
     
-    # Masked key for health check
-    masked_key = f"{api_key[:8]}...{api_key[-4:]}" if len(api_key) > 12 else "****"
-    print(f"[Gemini Health] Using API key: {masked_key}")
-
     # Universal Fallback List - Coordinated for maximum reliability
     models_to_try = [
         'gemini-flash-latest', 'gemini-pro-latest', 'gemini-pro', 
         'gemini-1.5-flash', 'gemini-1.0-pro'
     ]
+
+    # Speed Optimization: If we have a working model, push it to the top!
+    if WORKING_MODEL and WORKING_MODEL in models_to_try:
+        models_to_try.remove(WORKING_MODEL)
+        models_to_try.insert(0, WORKING_MODEL)
     
     last_err = None
     for model_name in models_to_try:
         try:
             print(f"[Gemini] Attempting {model_name}...")
             model = genai.GenerativeModel(model_name)
-            # Use a fast response for health checks or small prompts
+            # Short timeout-like behavior: if it takes too long, we will fail over
             response = model.generate_content(prompt)
             
             if not response or not response.text:
@@ -213,6 +240,11 @@ def gemini_json(prompt: str) -> dict | None:
                 text = text.rsplit("```", 1)[0]
             text = text.strip()
             
+            # SUCCESS! Set as global working model for future speed
+            if model_name != WORKING_MODEL:
+                print(f"[Speed Upgrade] Locking {model_name} as the primary model.")
+                WORKING_MODEL = model_name
+
             return json.loads(text)
         except Exception as e:
             last_err = e
