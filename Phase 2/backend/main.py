@@ -45,23 +45,31 @@ async def health_check():
     
     masked_key = f"{api_key[:8]}...{api_key[-4:]}" if len(api_key) > 12 else "****"
     
-    # Try a simple "Hello" to test the connection
-    try:
-        model = genai.GenerativeModel('gemini-1.5-flash')
-        response = model.generate_content("hello")
-        return {
-            "status": "success", 
-            "api_key_loaded": "Yes", 
-            "masked_key": masked_key,
-            "gemini_response": response.text.strip()
-        }
-    except Exception as e:
-        return {
-            "status": "error", 
-            "api_key_loaded": "Yes", 
-            "masked_key": masked_key, 
-            "error_detail": str(e)
-        }
+    # Try multiple models to find a working one for this API version
+    models_to_test = ['gemini-pro', 'gemini-1.5-flash', 'gemini-1.0-pro']
+    errors = {}
+    
+    for model_name in models_to_test:
+        try:
+            model = genai.GenerativeModel(model_name)
+            response = model.generate_content("hello")
+            return {
+                "status": "success", 
+                "working_model": model_name,
+                "api_key_loaded": "Yes", 
+                "masked_key": masked_key,
+                "gemini_response": response.text.strip()
+            }
+        except Exception as e:
+            errors[model_name] = str(e)
+            
+    return {
+        "status": "error", 
+        "api_key_loaded": "Yes", 
+        "masked_key": masked_key, 
+        "errors": errors,
+        "advice": "All models failed. Check if Gemini API is enabled in your Google AI Studio / Google Cloud Project."
+    }
 
 DB_PATH = os.environ.get("DATABASE_URL", ".app.db")
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -169,8 +177,8 @@ def gemini_json(prompt: str) -> dict | None:
     masked_key = f"{api_key[:8]}...{api_key[-4:]}" if len(api_key) > 12 else "****"
     print(f"[Gemini Health] Using API key: {masked_key}")
 
-    # List of models to try in order of preference
-    models_to_try = ['gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-pro']
+    # List of models to try in order of preference (Compatibility first)
+    models_to_try = ['gemini-pro', 'gemini-1.5-flash', 'gemini-1.0-pro']
     
     last_err = None
     for model_name in models_to_try:
@@ -189,7 +197,7 @@ def gemini_json(prompt: str) -> dict | None:
         except Exception as e:
             last_err = e
             print(f"[Gemini Error with {model_name}] {e}")
-            # Try the next model for ANY error (404, 429, etc.)
+            # Try the next model for ANY error
             continue
             
     print(f"[Gemini Final Failure] All models failed. Last error: {last_err}")
