@@ -16,7 +16,7 @@ IntelliCover is an AI-powered micro-insurance platform designed specifically for
 - **Backend**: FastAPI (Python), uvicorn, SQLite for persistence.
 - **AI Engine**: Google Gemini 1.5 Flash (via `google-generativeai`).
 - **External APIs**: Open-Meteo (Weather), Google News RSS, Maps Traffic Simulation.
-
+`
 ## Setup Instructions
 
 ### 1. Prerequisite

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -15,7 +16,7 @@
             --text-dark: #1D1D1F;
             --text-light: #6E6E73;
             --border-radius: 24px;
-            --shadow-soft: 0 10px 30px rgba(0,0,0,0.05);
+            --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.05);
             --gradient-blue: linear-gradient(135deg, #0F62FE, #4A90E2);
             --gradient-green: linear-gradient(135deg, #00C853, #69F0AE);
             --danger: #FF3B30;
@@ -43,7 +44,7 @@
             background-color: var(--bg-color);
             min-height: 100vh;
             position: relative;
-            box-shadow: 0 0 50px rgba(0,0,0,0.1);
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.1);
             overflow-x: hidden;
             display: flex;
             flex-direction: column;
@@ -61,14 +62,37 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         /* Typography */
-        h1 { font-size: 28px; font-weight: 700; color: var(--text-dark); margin-bottom: 8px; }
-        h2 { font-size: 20px; font-weight: 600; color: var(--text-dark); margin-bottom: 16px; }
-        p { font-size: 15px; color: var(--text-light); line-height: 1.5; }
+        h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+
+        h2 {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 16px;
+        }
+
+        p {
+            font-size: 15px;
+            color: var(--text-light);
+            line-height: 1.5;
+        }
 
         /* Cards */
         .card {
@@ -83,18 +107,37 @@
             background: var(--gradient-blue);
             color: white;
         }
-        .card-gradient-blue p, .card-gradient-blue h2 { color: white; }
+
+        .card-gradient-blue p,
+        .card-gradient-blue h2 {
+            color: white;
+        }
 
         .card-gradient-green {
             background: var(--gradient-green);
             color: white;
         }
-        .card-gradient-green p, .card-gradient-green h2 { color: white; }
+
+        .card-gradient-green p,
+        .card-gradient-green h2 {
+            color: white;
+        }
 
         /* Forms */
-        .form-group { margin-bottom: 16px; }
-        label { display: block; font-size: 14px; font-weight: 500; margin-bottom: 8px; color: var(--text-dark); }
-        input, select {
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: var(--text-dark);
+        }
+
+        input,
+        select {
             width: 100%;
             padding: 14px;
             border: 1px solid #E5E5EA;
@@ -104,7 +147,12 @@
             transition: border-color 0.2s;
             background: #FAFAFA;
         }
-        input:focus, select:focus { border-color: var(--primary); background: #FFF; }
+
+        input:focus,
+        select:focus {
+            border-color: var(--primary);
+            background: #FFF;
+        }
 
         /* Buttons */
         .btn {
@@ -118,79 +166,481 @@
             transition: transform 0.1s, opacity 0.2s;
             text-align: center;
         }
-        .btn:active { transform: scale(0.98); }
-        .btn:disabled { opacity: 0.7; cursor: not-allowed; }
-        .btn-primary { background: var(--primary); color: #FFF; box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3); }
-        .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #FFF;
+            box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
 
         /* Dashboard Specifics */
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-top: 12px; }
-        .avatar { width: 44px; height: 44px; border-radius: 22px; background: #D1D5DB; display: flex; align-items: center; justify-content: center; font-size: 20px; }
-        .avatar-container { position: relative; cursor: pointer; }
-        .avatar-dropdown { display: none; position: absolute; top: 50px; right: 0; background: var(--card-bg); border-radius: 16px; padding: 0; box-shadow: 0 10px 30px rgba(0,0,0,0.15); min-width: 220px; z-index: 10; cursor: default; overflow: hidden; }
-        .avatar-dropdown.show { display: block; animation: fadeIn 0.2s ease; }
-        .avatar-dropdown .btn-logout { width: 100%; font-size: 14px; border: none; background: transparent; padding: 12px 16px; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 8px; color: var(--danger); text-align: left; transition: background 0.1s; }
-        .avatar-dropdown .btn-logout:hover { background: #fef2f2; }
-        .profile-pic-wrapper { position: relative; display: inline-flex; margin-bottom: 12px; }
-        .edit-avatar-btn { position: absolute; bottom: 0; right: 0; background: #fff; border-radius: 50%; width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.15); cursor: pointer; color: var(--primary); transition: transform 0.1s; }
-        .edit-avatar-btn:hover { transform: scale(1.1); }
-        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-top: 12px;
+        }
+
+        .avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 22px;
+            background: #D1D5DB;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .avatar-container {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .avatar-dropdown {
+            display: none;
+            position: absolute;
+            top: 50px;
+            right: 0;
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 0;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            min-width: 220px;
+            z-index: 10;
+            cursor: default;
+            overflow: hidden;
+        }
+
+        .avatar-dropdown.show {
+            display: block;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .avatar-dropdown .btn-logout {
+            width: 100%;
+            font-size: 14px;
+            border: none;
+            background: transparent;
+            padding: 12px 16px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--danger);
+            text-align: left;
+            transition: background 0.1s;
+        }
+
+        .avatar-dropdown .btn-logout:hover {
+            background: #fef2f2;
+        }
+
+        .profile-pic-wrapper {
+            position: relative;
+            display: inline-flex;
+            margin-bottom: 12px;
+        }
+
+        .edit-avatar-btn {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background: #fff;
+            border-radius: 50%;
+            width: 26px;
+            height: 26px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+            cursor: pointer;
+            color: var(--primary);
+            transition: transform 0.1s;
+        }
+
+        .edit-avatar-btn:hover {
+            transform: scale(1.1);
+        }
+
         .status-badge {
             display: inline-flex;
             align-items: center;
             padding: 6px 12px;
-            background: rgba(255,255,255,0.2);
+            background: rgba(255, 255, 255, 0.2);
             border-radius: 20px;
             font-size: 12px;
             font-weight: 600;
             margin-top: 8px;
         }
 
-        .alert-item { display: flex; align-items: center; padding: 12px 0; border-bottom: 1px solid #F3F4F6; }
-        .alert-item:last-child { border-bottom: none; padding-bottom: 0; }
-        .alert-icon { font-size: 24px; margin-right: 16px; width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: #F3F4F6; }
-        .alert-content { flex: 1; }
-        .alert-content h4 { font-size: 15px; color: var(--text-dark); margin-bottom: 2px; }
-        .alert-content p { font-size: 13px; margin: 0; }
-        
-        .badge-covered { font-size: 13px; color: var(--secondary); font-weight: 600; }
-        .badge-uncovered { font-size: 13px; color: var(--danger); font-weight: 600; }
+        .alert-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #F3F4F6;
+        }
 
-        .btn-group { display: flex; gap: 12px; margin-top: 24px; }
-        .btn-group .btn { flex: 1; padding: 14px; font-size: 14px; }
+        .alert-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .alert-icon {
+            font-size: 24px;
+            margin-right: 16px;
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #F3F4F6;
+        }
+
+        .alert-content {
+            flex: 1;
+        }
+
+        .alert-content h4 {
+            font-size: 15px;
+            color: var(--text-dark);
+            margin-bottom: 2px;
+        }
+
+        .alert-content p {
+            font-size: 13px;
+            margin: 0;
+        }
+
+        .badge-covered {
+            font-size: 13px;
+            color: var(--secondary);
+            font-weight: 600;
+        }
+
+        .badge-uncovered {
+            font-size: 13px;
+            color: var(--danger);
+            font-weight: 600;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .btn-group .btn {
+            flex: 1;
+            padding: 14px;
+            font-size: 14px;
+        }
 
         /* Plans */
-        .plan-card { border: 2px solid transparent; transition: all 0.2s; position: relative; }
-        .plan-card:hover, .plan-card.selected { border-color: var(--primary); transform: translateY(-2px); }
-        .plan-price { font-size: 24px; font-weight: 700; color: var(--text-dark); margin: 8px 0; }
-        .plan-popular { position: absolute; top: -12px; right: 20px; background: var(--secondary); color: white; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 600; }
-        .plan-features { margin-top: 16px; list-style: none; }
-        .plan-features li { display: flex; align-items: center; font-size: 14px; margin-bottom: 8px; color: var(--text-dark); }
-        .plan-features li::before { content: '✓'; color: var(--secondary); font-weight: bold; margin-right: 8px; }
+        .plan-card {
+            border: 2px solid transparent;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .plan-card:hover,
+        .plan-card.selected {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .plan-price {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin: 8px 0;
+        }
+
+        .plan-popular {
+            position: absolute;
+            top: -12px;
+            right: 20px;
+            background: var(--secondary);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .plan-features {
+            margin-top: 16px;
+            list-style: none;
+        }
+
+        .plan-features li {
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            margin-bottom: 8px;
+            color: var(--text-dark);
+        }
+
+        .plan-features li::before {
+            content: '✓';
+            color: var(--secondary);
+            font-weight: bold;
+            margin-right: 8px;
+        }
 
         /* Success Card specific */
-        .success-icon { font-size: 48px; text-align: center; margin-bottom: 16px; }
-        .amount-large { font-size: 36px; font-weight: 700; text-align: center; margin: 16px 0; }
+        .success-icon {
+            font-size: 48px;
+            text-align: center;
+            margin-bottom: 16px;
+        }
+
+        .amount-large {
+            font-size: 36px;
+            font-weight: 700;
+            text-align: center;
+            margin: 16px 0;
+        }
 
         /* Top Nav Back button */
-        .nav-back { display: flex; align-items: center; padding: 20px 24px; cursor: pointer; color: var(--text-dark); font-weight: 500; }
-        .nav-back span { margin-right: 8px; font-size: 20px; }
+        .nav-back {
+            display: flex;
+            align-items: center;
+            padding: 20px 24px;
+            cursor: pointer;
+            color: var(--text-dark);
+            font-weight: 500;
+        }
+
+        .nav-back span {
+            margin-right: 8px;
+            font-size: 20px;
+        }
 
         /* History List */
-        .history-item { display: flex; justify-content: space-between; align-items: center; padding: 16px 0; border-bottom: 1px solid #E5E5EA; }
-        .history-item:last-child { border-bottom: none; }
-        .history-left h4 { font-size: 15px; margin-bottom: 4px; color: var(--text-dark); }
-        .history-left p { font-size: 13px; color: var(--text-light); }
-        .history-right { text-align: right; }
-        .history-right .amount { font-weight: 600; color: var(--secondary); }
-        .history-right .status { font-size: 12px; color: var(--text-light); margin-top: 4px; }
-        
-        .loading-overlay { display: none; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(244,247,246,0.85); align-items: center; justify-content: center; z-index: 100; flex-direction: column; text-align: center; }
-        .spinner { border: 3px solid #E5E5EA; border-top: 3px solid var(--primary); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin-bottom: 16px; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+            border-bottom: 1px solid #E5E5EA;
+        }
 
+        .history-item:last-child {
+            border-bottom: none;
+        }
+
+        .history-left h4 {
+            font-size: 15px;
+            margin-bottom: 4px;
+            color: var(--text-dark);
+        }
+
+        .history-left p {
+            font-size: 13px;
+            color: var(--text-light);
+        }
+
+        .history-right {
+            text-align: right;
+        }
+
+        .history-right .amount {
+            font-weight: 600;
+            color: var(--secondary);
+        }
+
+        .history-right .status {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-top: 4px;
+        }
+
+        .loading-overlay {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(244, 247, 246, 0.85);
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .spinner {
+            border: 3px solid #E5E5EA;
+            border-top: 3px solid var(--primary);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 16px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Admin Dashboard Styles */
+        .admin-header {
+            background: #1C2B36;
+            padding: 24px;
+            color: white;
+            border-radius: 0 0 24px 24px;
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin: -20px 24px 24px 24px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 16px;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            text-align: center;
+        }
+
+        .stat-val {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin: 8px 0;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .loss-ratio-card {
+            background: white;
+            margin: 0 24px 24px 24px;
+            padding: 20px;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .ratio-bar-container {
+            height: 12px;
+            background: #F3F4F6;
+            border-radius: 6px;
+            margin: 16px 0;
+            overflow: hidden;
+        }
+
+        .ratio-bar-fill {
+            height: 100%;
+            background: #10B981;
+            border-radius: 6px;
+            transition: width 0.5s ease;
+        }
+
+        .plan-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .plan-bar-label {
+            width: 80px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .plan-bar-track {
+            flex: 1;
+            height: 8px;
+            background: #F3F4F6;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .plan-bar-fill {
+            height: 100%;
+            border-radius: 4px;
+        }
+
+        .pred-card {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            background: white;
+            border: 1px solid #F3F4F6;
+            border-radius: 14px;
+            margin-bottom: 12px;
+        }
+
+        .pred-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .risk-badge {
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .risk-high {
+            background: #FEE2E2;
+            color: #991B1B;
+        }
+
+        .risk-medium {
+            background: #FEF3C7;
+            color: #92400E;
+        }
+
+        .risk-low {
+            background: #D1FAE5;
+            color: #065F46;
+        }
     </style>
 </head>
+
 <body>
 
     <div id="app">
@@ -214,8 +664,18 @@
                     <input type="tel" name="phone" required placeholder="10-digit mobile number" pattern="[0-9]{10}">
                 </div>
                 <button type="submit" class="btn btn-primary" style="margin-top: 24px;">Login</button>
-                <div style="text-align: center; margin-top: 16px;">
-                    <a href="#" onclick="app.nav('register')" style="color: var(--primary); text-decoration: none; font-size: 14px; font-weight: 500;">New user? Register</a>
+                <div style="text-align: center; margin-top: 24px;">
+                    <a href="javascript:void(0)" onclick="app.nav('register')"
+                        style="color: var(--primary); text-decoration: none; font-size: 14px; font-weight: 600; padding: 12px; display: inline-block;">New
+                        user? Create Account</a>
+                    <br>
+                    <a href="javascript:void(0)" onclick="app.nav('admin-login')"
+                        style="color: var(--text-light); text-decoration: none; font-size: 12px; margin-top: 8px; display: inline-block;">Admin
+                        Portal</a>
+                </div>
+                <div
+                    style="margin-top: 16px; background: #F0F9FF; border: 1px solid #BAE6FD; border-radius: 12px; padding: 10px 14px; font-size: 12px; color: #0369A1; text-align:center;">
+                    🧪 <b>Demo Mode</b>: Enter any valid 10-digit number to login without a backend.
                 </div>
             </form>
         </div>
@@ -239,17 +699,26 @@
                 <!-- Detailed Residential Address during Registration -->
                 <div class="form-group">
                     <label>Detailed Home Address</label>
-                    <textarea name="address" required placeholder="E.g. No 42, 1st Cross, Indiranagar, 560038" rows="2" style="width: 100%; border: 1px solid #E5E5EA; border-radius: 12px; padding: 12px; font-family: inherit; font-size: 15px; resize: none;"></textarea>
+                    <textarea name="address" required placeholder="E.g. No 42, 1st Cross, Indiranagar, 560038" rows="2"
+                        style="width: 100%; border: 1px solid #E5E5EA; border-radius: 12px; padding: 12px; font-family: inherit; font-size: 15px; resize: none;"></textarea>
                 </div>
                 <div class="form-group">
                     <label>City</label>
-                    <select name="city" required>
+                    <select name="city" id="reg-city" required onchange="app.updateZones(this.value)">
                         <option value="" disabled selected>Select City</option>
                         <option value="Chennai">Chennai</option>
                         <option value="Mumbai">Mumbai</option>
                         <option value="Bangalore">Bangalore</option>
                         <option value="Madurai">Madurai</option>
                         <option value="Trichy">Trichy</option>
+                    </select>
+                </div>
+                <div class="form-group" id="zone-group" style="display:none;">
+                    <label>Primary Service Zone <span
+                            style="font-size:11px; font-weight:normal; color:var(--text-light);">(For dynamic radius
+                            caching)</span></label>
+                    <select name="home_zone" id="reg-zone" required>
+                        <option value="" disabled selected>Select neighborhood</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -261,8 +730,10 @@
                     </select>
                 </div>
                 <button type="submit" class="btn btn-primary" style="margin-top: 24px;">Create Account</button>
-                <div style="text-align: center; margin-top: 16px;">
-                    <a href="#" onclick="app.nav('login')" style="color: var(--text-light); text-decoration: none; font-size: 14px;">Already registered? Login</a>
+                <div style="text-align: center; margin-top: 24px;">
+                    <a href="javascript:void(0)" onclick="app.nav('login')"
+                        style="color: var(--text-light); text-decoration: none; font-size: 14px; padding: 12px; display: inline-block;">Already
+                        registered? Login</a>
                 </div>
             </form>
         </div>
@@ -274,42 +745,57 @@
                     <p style="font-size: 13px; margin-bottom: 4px;">Welcome back,</p>
                     <h1 style="font-size: 22px; margin: 0;" id="dash-name">User</h1>
                 </div>
-                <div class="avatar-container" onclick="document.getElementById('avatar-dropdown').classList.toggle('show')">
-                    <div class="avatar" id="main-avatar" style="background-size: cover; background-position: center; border: 2px solid transparent;">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4B5563" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                <div class="avatar-container"
+                    onclick="document.getElementById('avatar-dropdown').classList.toggle('show')">
+                    <div class="avatar" id="main-avatar"
+                        style="background-size: cover; background-position: center; border: 2px solid transparent;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4B5563" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
                     </div>
                     <div id="avatar-dropdown" class="avatar-dropdown" onclick="event.stopPropagation()">
-                        <div style="padding: 24px 16px 16px 16px; text-align: center; border-bottom: 1px solid #E5E5EA;">
+                        <div
+                            style="padding: 24px 16px 16px 16px; text-align: center; border-bottom: 1px solid #E5E5EA;">
                             <div class="profile-pic-wrapper">
-                                <div id="dropdown-avatar" class="avatar" style="width: 64px; height: 64px; border-radius: 32px; background-size: cover; background-position: center; border: 2px solid transparent; box-shadow: 0 4px 10px rgba(0,0,0,0.1); position: relative; z-index: 1;">
-                                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#8E8E93" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                                <div id="dropdown-avatar" class="avatar"
+                                    style="width: 64px; height: 64px; border-radius: 32px; background-size: cover; background-position: center; border: 2px solid transparent; box-shadow: 0 4px 10px rgba(0,0,0,0.1); position: relative; z-index: 1;">
+                                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#8E8E93"
+                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                        <circle cx="12" cy="7" r="4"></circle>
+                                    </svg>
                                 </div>
                                 <label class="edit-avatar-btn" style="z-index: 2;">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
-                                    <input type="file" style="display: none;" accept="image/*" onchange="app.changeAvatar(this)">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M12 20h9"></path>
+                                        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+                                    </svg>
+                                    <input type="file" style="display: none;" accept="image/*"
+                                        onchange="app.changeAvatar(this)">
                                 </label>
                             </div>
-                            <h3 id="dd-name" style="margin: 0; font-size: 16px; color: var(--text-dark); text-transform: capitalize; font-weight: 600;"></h3>
-                            <p style="margin: 6px 0 0 0; font-size: 13px; color: var(--text-light); display: flex; align-items: center; justify-content: center; gap: 4px;">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                            <h3 id="dd-name"
+                                style="margin: 0; font-size: 16px; color: var(--text-dark); text-transform: capitalize; font-weight: 600;">
+                            </h3>
+                            <p
+                                style="margin: 6px 0 0 0; font-size: 13px; color: var(--text-light); display: flex; align-items: center; justify-content: center; gap: 4px;">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                    <circle cx="12" cy="10" r="3"></circle>
+                                </svg>
                                 <span id="dd-city"></span>
                             </p>
-                            <div style="margin-top: 14px;">
-                                <p style="font-size: 11px; color: var(--text-light); margin-bottom: 8px; font-weight: 500;">Choose Avatar</p>
-                                <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
-                                    <div onclick="app.setDefaultAvatar('👷')" style="width: 40px; height: 40px; border-radius: 50%; background: #DBEAFE; display: flex; align-items: center; justify-content: center; font-size: 20px; cursor: pointer; transition: transform 0.15s; border: 2px solid transparent;" onmouseover="this.style.transform='scale(1.15)'" onmouseout="this.style.transform='scale(1)'">👷</div>
-                                    <div onclick="app.setDefaultAvatar('🧑‍💼')" style="width: 40px; height: 40px; border-radius: 50%; background: #FCE7F3; display: flex; align-items: center; justify-content: center; font-size: 20px; cursor: pointer; transition: transform 0.15s; border: 2px solid transparent;" onmouseover="this.style.transform='scale(1.15)'" onmouseout="this.style.transform='scale(1)'">🧑‍💼</div>
-                                    <div onclick="app.setDefaultAvatar('🏍️')" style="width: 40px; height: 40px; border-radius: 50%; background: #D1FAE5; display: flex; align-items: center; justify-content: center; font-size: 20px; cursor: pointer; transition: transform 0.15s; border: 2px solid transparent;" onmouseover="this.style.transform='scale(1.15)'" onmouseout="this.style.transform='scale(1)'">🏍️</div>
-                                    <div onclick="app.setDefaultAvatar('🚴')" style="width: 40px; height: 40px; border-radius: 50%; background: #FEF3C7; display: flex; align-items: center; justify-content: center; font-size: 20px; cursor: pointer; transition: transform 0.15s; border: 2px solid transparent;" onmouseover="this.style.transform='scale(1.15)'" onmouseout="this.style.transform='scale(1)'">🚴</div>
-                                    <div onclick="app.setDefaultAvatar('🛵')" style="width: 40px; height: 40px; border-radius: 50%; background: #EDE9FE; display: flex; align-items: center; justify-content: center; font-size: 20px; cursor: pointer; transition: transform 0.15s; border: 2px solid transparent;" onmouseover="this.style.transform='scale(1.15)'" onmouseout="this.style.transform='scale(1)'">🛵</div>
-                                    <div onclick="app.setDefaultAvatar('🧢')" style="width: 40px; height: 40px; border-radius: 50%; background: #FFE4E6; display: flex; align-items: center; justify-content: center; font-size: 20px; cursor: pointer; transition: transform 0.15s; border: 2px solid transparent;" onmouseover="this.style.transform='scale(1.15)'" onmouseout="this.style.transform='scale(1)'">🧢</div>
-                                </div>
-                            </div>
                         </div>
-                        <button class="btn btn-logout" onclick="app.logout()">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
-                            Logout
-                        </button>
+
+                        <div style="background: #F8FAFC; padding: 8px;">
+                            <button class="btn-logout" onclick="app.logout()">
+                                <span style="filter: grayscale(1);">👋</span> Log Out
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -329,21 +815,41 @@
             </div>
 
             <!-- Earnings Protected Card -->
-            <div class="card">
-                <p>Earnings Protected</p>
-                <div style="display: flex; align-items: center; margin-top: 8px;">
-                    <div style="font-size: 32px; font-weight: 700; color: var(--text-dark);" id="dash-earnings">₹0</div>
-                    <div style="margin-left: 12px; background: #E6F4EA; color: #137333; padding: 4px 8px; border-radius: 8px; font-size: 12px; font-weight: 600;">This Month</div>
+            <div style="display: flex; gap: 12px; margin-bottom: 16px;">
+                <div class="card" style="flex: 1; margin-bottom: 0;">
+                    <p style="font-size: 12px;">Earnings <span
+                            style="color:#137333; font-weight:bold;">[SIMULATED]</span></p>
+                    <div style="display: flex; align-items: center; margin-top: 8px;">
+                        <div style="font-size: 24px; font-weight: 700; color: var(--text-dark);" id="dash-earnings">₹0
+                        </div>
+                    </div>
+                </div>
+                <!-- Honor Score -->
+                <div class="card" style="flex: 1; margin-bottom: 0;">
+                    <p style="font-size: 11px;">Credibility Score <span
+                            style="color:var(--primary); font-weight:bold;">[AI Trusted Baseline]</span></p>
+                    <div style="display: flex; align-items: center; margin-top: 8px;">
+                        <div style="font-size: 24px; font-weight: 700; color: var(--text-dark);" id="dash-credibility">
+                            80</div>
+                        <div style="margin-left: 8px; font-size: 11px; color: var(--text-light);">/ 100</div>
+                    </div>
                 </div>
             </div>
 
             <!-- Active Disruption Alerts -->
-            <h2 style="font-size: 16px; margin-top: 24px;">Active Disruption Alerts</h2>
+            <div
+                style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 24px; margin-bottom: 12px;">
+                <h2 style="font-size: 16px; margin: 0;">Active Disruption Alerts</h2>
+                <span style="font-size: 10px; color: var(--primary); font-weight:bold;">LIVE: Open-Meteo & News
+                    APIs</span>
+            </div>
             <div class="card" style="padding: 12px 20px;">
                 <div class="alert-item">
                     <div class="alert-icon">🌧️</div>
                     <div class="alert-content">
-                        <h4>Heavy Rain Alert</h4>
+                        <h4>Heavy Rain Alert <span
+                                style="font-size:10px; padding:2px 4px; background:#ddd; border-radius:4px; font-weight:normal;"
+                                title="WMO Standard: >50mm in 24 hrs">WMO Info</span></h4>
                         <p style="color: var(--danger);">Active in your area</p>
                     </div>
                     <div id="dash-cov-rain"></div>
@@ -351,7 +857,9 @@
                 <div class="alert-item">
                     <div class="alert-icon">🔥</div>
                     <div class="alert-content">
-                        <h4>Heat Wave Warning</h4>
+                        <h4>Heat Wave Warning <span
+                                style="font-size:10px; padding:2px 4px; background:#ddd; border-radius:4px; font-weight:normal;"
+                                title="WMO Standard: >38°C sustained">WMO Info</span></h4>
                         <p style="color: var(--warning);">Monitoring conditions</p>
                     </div>
                     <div id="dash-cov-heat"></div>
@@ -373,7 +881,8 @@
                     <div id="dash-cov-strike"></div>
                 </div>
             </div>
-            <p style="font-size: 11px; color: var(--text-light); margin-top: 8px; padding: 0 4px;">📍 Disruptions are verified within a 5–10 km radius of your registered location using live APIs.</p>
+            <p style="font-size: 11px; color: var(--text-light); margin-top: 8px; padding: 0 4px;">📍 Disruptions are
+                verified within a 5–10 km radius of your registered location using live APIs.</p>
 
             <!-- Dynamic Premium -->
             <div class="card" id="dynamic-premium-card" style="display: none; border: 1px solid #E5E5EA;">
@@ -381,7 +890,8 @@
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                     <div>
                         <p style="font-size: 13px;"><span id="dyn-type"></span> Risk Level: <b id="dyn-risk">Low</b></p>
-                        <p style="font-size: 12px; color: var(--text-light); text-decoration: line-through;">Base: ₹<span id="dyn-base"></span>/wk</p>
+                        <p style="font-size: 12px; color: var(--text-light); text-decoration: line-through;">Base:
+                            ₹<span id="dyn-base"></span>/wk</p>
                         <p style="font-size: 11px; color: var(--text-light); margin-top: 4px;" id="dyn-reason"></p>
                     </div>
                     <div style="font-size: 20px; font-weight: 700;" id="dyn-price-display">
@@ -394,7 +904,7 @@
                 <button class="btn btn-outline" onclick="app.nav('plans')">Upgrade Plan</button>
                 <button class="btn btn-outline" onclick="app.nav('history')">View Claims</button>
             </div>
-            
+
             <button class="btn btn-primary" style="margin-top: 12px;" onclick="app.nav('claim')">Raise Claim</button>
         </div>
 
@@ -408,17 +918,20 @@
 
                 <div class="card plan-card" id="plan-card-basic" onclick="app.selectPlanUI(this, 'Basic Plan', 20)">
                     <h2>Basic Plan</h2>
-                    <div class="plan-price">₹20<span style="font-size: 14px; color: var(--text-light); font-weight: 400;">/week</span></div>
+                    <div class="plan-price">₹20<span
+                            style="font-size: 14px; color: var(--text-light); font-weight: 400;">/week</span></div>
                     <ul class="plan-features">
                         <li>Rain protection</li>
                         <li>3 claims per month</li>
                     </ul>
                 </div>
 
-                <div class="card plan-card selected" style="border-color: var(--primary);" id="plan-card-standard" onclick="app.selectPlanUI(this, 'Standard Plan', 35)">
+                <div class="card plan-card selected" style="border-color: var(--primary);" id="plan-card-standard"
+                    onclick="app.selectPlanUI(this, 'Standard Plan', 35)">
                     <div class="plan-popular">Most Popular</div>
                     <h2>Standard Plan</h2>
-                    <div class="plan-price">₹35<span style="font-size: 14px; color: var(--text-light); font-weight: 400;">/week</span></div>
+                    <div class="plan-price">₹35<span
+                            style="font-size: 14px; color: var(--text-light); font-weight: 400;">/week</span></div>
                     <ul class="plan-features">
                         <li>Rain protection</li>
                         <li>Heat protection</li>
@@ -429,7 +942,8 @@
 
                 <div class="card plan-card" id="plan-card-premium" onclick="app.selectPlanUI(this, 'Premium Plan', 50)">
                     <h2>Premium Plan</h2>
-                    <div class="plan-price">₹50<span style="font-size: 14px; color: var(--text-light); font-weight: 400;">/week</span></div>
+                    <div class="plan-price">₹50<span
+                            style="font-size: 14px; color: var(--text-light); font-weight: 400;">/week</span></div>
                     <ul class="plan-features">
                         <li>Rain protection</li>
                         <li>Heat protection</li>
@@ -439,7 +953,23 @@
                     </ul>
                 </div>
 
-                <button class="btn btn-primary" style="margin-top: 16px;" onclick="app.activatePlan()">Activate Plan</button>
+                <div class="card"
+                    style="margin-top: 16px; font-size: 11px; padding: 12px; background: #fffbe6; border: 1px solid #ffecb3;">
+                    <h4 style="margin-bottom: 6px;">📜 Policy Terms & Exclusions</h4>
+                    <p>Standard Exclusions apply: No coverage for personal health, vehicle damage, or individual offline
+                        decisions.</p>
+                    <p style="margin-top: 4px; font-style: italic; color:#666;">Generated under the IRDAI Regulatory
+                        Sandbox Framework for Parametric Micro-Insurance.</p>
+                </div>
+
+                <div id="gig-sync-btn" style="text-align:center; margin-top:24px;">
+                    <button class="btn" style="background:#000; color:#fff;" onclick="app.syncAccount()">🔗 Link
+                        Swiggy/Zomato to Fetch Base Loss</button>
+                    <p style="font-size:11px; margin-top:8px;">Required to accurately calculate your parameteric payout.
+                    </p>
+                </div>
+                <button id="activate-plan-btn" class="btn btn-primary" style="margin-top: 16px; display:none;"
+                    onclick="app.activatePlan()">Pay via Razorpay & Activate</button>
             </div>
         </div>
 
@@ -452,29 +982,38 @@
 
                 <form id="form-claim">
                     <!-- Detailed Incident Address -->
-                    <div class="form-group" style="background: #F9FAFB; padding: 16px; border-radius: 12px; border: 1px solid #E5E5EA;">
+                    <div class="form-group"
+                        style="background: #F9FAFB; padding: 16px; border-radius: 12px; border: 1px solid #E5E5EA;">
                         <label style="margin-bottom: 12px; font-weight: 700;">Detailed Incident Address</label>
-                        
+
                         <div style="margin-bottom: 12px;">
-                            <label style="font-size: 13px; color: var(--text-light); margin-bottom: 4px;">Street Name / Flat No</label>
-                            <input type="text" name="street" id="claim-street" required placeholder="E.g. No 12, Commercial Street">
+                            <label style="font-size: 13px; color: var(--text-light); margin-bottom: 4px;">Street Name /
+                                Flat No</label>
+                            <input type="text" name="street" id="claim-street" required
+                                placeholder="E.g. No 12, Commercial Street">
                         </div>
-                        
+
                         <div style="display: flex; gap: 12px; margin-bottom: 12px;">
                             <div style="flex: 2;">
-                                <label style="font-size: 13px; color: var(--text-light); margin-bottom: 4px;">Local Area / Landmark</label>
-                                <input type="text" name="area" id="claim-area" required placeholder="E.g. Near Metro Station">
+                                <label style="font-size: 13px; color: var(--text-light); margin-bottom: 4px;">Local Area
+                                    / Landmark</label>
+                                <input type="text" name="area" id="claim-area" required
+                                    placeholder="E.g. Near Metro Station">
                             </div>
                             <div style="flex: 1;">
-                                <label style="font-size: 13px; color: var(--text-light); margin-bottom: 4px;">Pincode</label>
+                                <label
+                                    style="font-size: 13px; color: var(--text-light); margin-bottom: 4px;">Pincode</label>
                                 <input type="number" name="pincode" id="claim-pincode" required placeholder="560001">
                             </div>
                         </div>
 
-                        <button type="button" class="btn" style="width: 100%; padding: 12px; background: #E5E5EA; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 14px;" title="Securely fetches your lat/long to auto-fill address" onclick="app.autoFillGPS(this)">
+                        <button type="button" class="btn"
+                            style="width: 100%; padding: 12px; background: #E5E5EA; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 14px;"
+                            title="Securely fetches your lat/long to auto-fill address" onclick="app.autoFillGPS(this)">
                             <span>📍</span> Auto-Fill via GPS
                         </button>
-                        <p style="font-size: 11px; color: var(--text-light); margin-top: 8px; margin-bottom: 0;">ℹ️ Precise address is actively pinged against the 5-Hour Maps Traffic and Local News APIs.</p>
+                        <p style="font-size: 11px; color: var(--text-light); margin-top: 8px; margin-bottom: 0;">ℹ️
+                            Precise address is actively pinged against the 5-Hour Maps Traffic and Local News APIs.</p>
                     </div>
 
                     <div class="form-group">
@@ -487,14 +1026,21 @@
                         <label>Date & Time</label>
                         <input type="datetime-local" name="datetime" required id="claim-datetime">
                     </div>
-                    
-                    <div id="claims-remaining-card" class="card" style="background: #F0F9FF; margin-top: 16px; border: 1px solid #BAE6FD; box-shadow: none; padding: 12px 16px;">
-                        <p style="font-size: 13px; color: var(--text-dark); margin: 0; font-weight: 500;">📊 Claims this month: <b id="claims-used">0</b> / 3 <span style="font-size: 11px; color: var(--text-light);">(<span id="claims-left">3</span> remaining)</span></p>
+
+                    <div id="claims-remaining-card" class="card"
+                        style="background: #F0F9FF; margin-top: 16px; border: 1px solid #BAE6FD; box-shadow: none; padding: 12px 16px;">
+                        <p style="font-size: 13px; color: var(--text-dark); margin: 0; font-weight: 500;">📊 Claims this
+                            month: <b id="claims-used">0</b> / 3 <span
+                                style="font-size: 11px; color: var(--text-light);">(<span id="claims-left">3</span>
+                                remaining)</span></p>
                     </div>
 
                     <div class="card" style="background: #EBF5FF; margin-top: 12px; border: none; box-shadow: none;">
-                        <p style="font-size: 13px; color: var(--primary-dark); margin: 0;">⚠️ Our AI correlates your claim with real-time weather, pollution, and crowd-density APIs for instant verification.</p>
-                        <p style="font-size: 11px; color: var(--text-light); margin-top: 6px;">📍 Disruptions are only verified within a <b>5–10 km radius</b> of your location.</p>
+                        <p style="font-size: 13px; color: var(--primary-dark); margin: 0;">⚠️ Our AI correlates your
+                            claim with real-time weather, pollution, and crowd-density APIs for instant verification.
+                        </p>
+                        <p style="font-size: 11px; color: var(--text-light); margin-top: 6px;">📍 Disruptions are only
+                            verified within a <b>5–10 km radius</b> of your location.</p>
                     </div>
 
                     <button type="submit" class="btn btn-primary" style="margin-top: 16px;">Submit Claim</button>
@@ -509,14 +1055,24 @@
                     <div class="success-icon">✨</div>
                     <h1>Claim Approved!</h1>
                     <p style="margin-top: 8px;">Automated via AI Verification</p>
-                    
+
                     <div class="amount-large" id="result-amount">₹500</div>
                     <p>Credited to your wallet</p>
 
-                    <div style="margin-top: 32px; text-align: left; background: rgba(0,0,0,0.1); padding: 16px; border-radius: 16px;">
+                    <div
+                        style="margin-top: 32px; text-align: left; background: rgba(0,0,0,0.1); padding: 16px; border-radius: 16px;">
+                        <div>
+                            <div class="card-label">Credibility Score <span
+                                    style="font-size: 10px; color: var(--primary);">[AI Trusted Baseline]</span></div>
+                            <div style="display: flex; align-items: baseline; gap: 4px;">
+                                <h2 style="margin: 0;" id="dash-score">80</h2>
+                                <span style="font-size: 14px; opacity: 0.6;">/ 100</span>
+                            </div>
+                        </div>
                         <div style="display: flex; flex-direction: column; margin-bottom: 12px; gap: 4px;">
                             <span style="font-size: 13px; opacity: 0.9;">Reason</span>
-                            <span style="font-size: 14px; font-weight: 600; line-height: 1.4;" id="result-reason">Heavy rain detected</span>
+                            <span style="font-size: 14px; font-weight: 600; line-height: 1.4;" id="result-reason">Heavy
+                                rain detected</span>
                         </div>
                         <div style="display: flex; justify-content: space-between;">
                             <span style="font-size: 13px; opacity: 0.9;">Date & Time</span>
@@ -525,7 +1081,8 @@
                     </div>
                 </div>
 
-                <button class="btn btn-outline" style="margin-top: 24px;" onclick="app.nav('dashboard')">Back to Dashboard</button>
+                <button class="btn btn-outline" style="margin-top: 24px;" onclick="app.nav('dashboard')">Back to
+                    Dashboard</button>
             </div>
         </div>
 
@@ -540,13 +1097,183 @@
             </div>
         </div>
 
+        <!-- MODULE 7: ADMIN LOGIN -->
+        <div class="view" id="view-admin-login">
+            <div class="login-container">
+                <div style="text-align: center; margin-bottom: 32px;">
+                    <h1 style="font-size: 28px; color: var(--text-dark);">Admin Portal</h1>
+                    <p style="color: var(--text-light); margin-top: 8px;">Identify as Chief Risk Officer</p>
+                </div>
+                <form id="form-admin-login">
+                    <div class="form-group">
+                        <label>Admin ID</label>
+                        <input type="text" name="username" required placeholder="Enter Admin ID">
+                    </div>
+                    <div class="form-group" style="margin-top: 16px;">
+                        <label>Super Password</label>
+                        <input type="password" name="password" required placeholder="••••••••">
+                    </div>
+                    <button type="submit" class="btn btn-primary"
+                        style="margin-top: 32px; background: var(--text-dark);">Authenticate Access</button>
+                    <div style="text-align: center; margin-top: 16px;">
+                        <a href="javascript:void(0)" onclick="app.nav('login')"
+                            style="color: var(--text-light); text-decoration: none; font-size: 14px;">Return to User
+                            App</a>
+                    </div>
+                    <div
+                        style="margin-top: 16px; background: #F0F9FF; border: 1px solid #BAE6FD; border-radius: 12px; padding: 10px 14px; font-size: 12px; color: #0369A1;">
+                        🔒 Demo credentials: <b>admin</b> / <b>admin123</b>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- MODULE 8: ADMIN DASHBOARD (PREMIUM VIEW) -->
+        <div class="view" id="view-admin" style="background: #F9FAFB; padding-bottom: 40px;">
+            <div class="admin-header">
+                <div
+                    style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px;">
+                    <div>
+                        <p style="font-size: 12px; opacity: 0.8; margin-bottom: 4px;">IntelliCover Platform</p>
+                        <h1 style="font-size: 28px; margin: 0;">Insurer Dashboard</h1>
+                        <p style="font-size: 14px; opacity: 0.9; margin-top: 4px;">Welcome back, <span
+                                style="font-weight:700;">Admin</span></p>
+                        <div
+                            style="display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.1); padding: 4px 10px; border-radius: 6px; font-size: 11px; margin-top: 12px;">
+                            <span>📖</span> Insurer • Admin Access
+                        </div>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <button class="btn"
+                            style="background: white; color: var(--primary); font-size: 12px; padding: 6px 16px;"
+                            onclick="app.fetchAdminStats()">🔄 Refresh</button>
+                        <button class="btn"
+                            style="background: rgba(255,255,255,0.2); border: none; font-size: 12px; padding: 6px 16px;"
+                            onclick="app.logout()">Logout</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-grid">
+                <div class="stat-card">
+                    <p class="stat-label">Total Workers</p>
+                    <div class="stat-val" id="adm-workers-val">0</div>
+                    <div style="border-top: 2px solid #3B82F6; width: 100%; margin-top: 8px;"></div>
+                </div>
+                <div class="stat-card">
+                    <p class="stat-label">Active Policies</p>
+                    <div class="stat-val" id="adm-policies-val">0</div>
+                    <div style="border-top: 2px solid #10B981; width: 100%; margin-top: 8px;"></div>
+                </div>
+                <div class="stat-card">
+                    <p class="stat-label">Premium Collected</p>
+                    <div class="stat-val" id="adm-premium-val" style="color: #F59E0B;">₹0</div>
+                    <div style="border-top: 2px solid #F59E0B; width: 100%; margin-top: 8px;"></div>
+                </div>
+                <div class="stat-card">
+                    <p class="stat-label">Claims Paid Out</p>
+                    <div class="stat-val" id="adm-claims-val" style="color: #EF4444;">₹0</div>
+                    <div style="border-top: 2px solid #EF4444; width: 100%; margin-top: 8px;"></div>
+                </div>
+            </div>
+
+            <div class="loss-ratio-card">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <p class="stat-label">Loss Ratio Analysis</p>
+                        <p style="font-size: 12px; color: var(--text-light); margin-top: 4px;">Claims Paid / Premium
+                            Collected</p>
+                    </div>
+                    <div class="risk-badge risk-low" style="padding: 6px 12px;" id="adm-status-badge">✅ Healthy</div>
+                </div>
+                <div style="display: flex; align-items: baseline; gap: 8px; margin-top: 20px;">
+                    <h2 style="font-size: 42px; margin: 0;" id="adm-ratio-val">0%</h2>
+                    <span style="color: var(--text-light); font-size: 13px;">Target: <70%< /span>
+                </div>
+                <div class="ratio-bar-container">
+                    <div class="ratio-bar-fill" id="adm-ratio-fill" style="width: 0%;"></div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; text-align: center;">
+                    <div>
+                        <p style="font-size: 16px; font-weight: 700; color: var(--text-dark);" id="adm-total-claims">0
+                        </p>
+                        <p style="font-size: 10px; color: var(--text-light);">Total Claims</p>
+                    </div>
+                    <div>
+                        <p style="font-size: 16px; font-weight: 700; color: #10B981;" id="adm-approved">0</p>
+                        <p style="font-size: 10px; color: var(--text-light);">Approved</p>
+                    </div>
+                    <div>
+                        <p style="font-size: 16px; font-weight: 700; color: #EF4444;" id="adm-rejected">0</p>
+                        <p style="font-size: 10px; color: var(--text-light);">Rejected</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="loss-ratio-card">
+                <p class="stat-label" style="margin-bottom: 20px;">🛡️ Plan Distribution</p>
+                <div class="plan-bar">
+                    <div class="plan-bar-label">Basic</div>
+                    <div class="plan-bar-track">
+                        <div class="plan-bar-fill" id="adm-plan-basic" style="width: 0%; background: #3B82F6;"></div>
+                    </div>
+                    <div style="font-size:13px; font-weight:700; color:var(--text-dark); width:20px; text-align:right;"
+                        id="adm-plan-basic-count">0</div>
+                </div>
+                <div class="plan-bar">
+                    <div class="plan-bar-label">Standard</div>
+                    <div class="plan-bar-track">
+                        <div class="plan-bar-fill" id="adm-plan-standard" style="width: 0%; background: #8B5CF6;"></div>
+                    </div>
+                    <div style="font-size:13px; font-weight:700; color:var(--text-dark); width:20px; text-align:right;"
+                        id="adm-plan-standard-count">0</div>
+                </div>
+                <div class="plan-bar">
+                    <div class="plan-bar-label">Premium</div>
+                    <div class="plan-bar-track">
+                        <div class="plan-bar-fill" id="adm-plan-premium" style="width: 0%; background: #10B981;"></div>
+                    </div>
+                    <div style="font-size:13px; font-weight:700; color:var(--text-dark); width:20px; text-align:right;"
+                        id="adm-plan-premium-count">0</div>
+                </div>
+            </div>
+
+            <div style="padding: 0 24px;">
+                <p class="stat-label" style="margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+                    🔮 Next Week Predictions <span
+                        style="font-size: 10px; background: #DBEAFE; color: #1E40AF; padding: 2px 6px; border-radius: 4px;">AI
+                        POWERED</span>
+                </p>
+                <div
+                    style="background: #EFF6FF; border: 1px solid #BFDBFE; border-radius: 12px; padding: 16px; margin-bottom: 16px; font-size: 13px; color: #1E40AF; line-height: 1.5;">
+                    April heat wave conditions expected across South India. Chennai and Bangalore face elevated heatwave
+                    and rainfall probability next week.
+                </div>
+                <div id="adm-predictions-container">
+                    <!-- Javascript populates this -->
+                </div>
+
+                <p class="stat-label" style="margin: 24px 0 16px; display: flex; align-items: center; gap: 8px;">
+                    📋 Recent Claims <span
+                        style="font-size:10px; background:#F3E8FF; color:#6B21A8; padding:2px 6px; border-radius:4px;">ALL
+                        WORKERS</span>
+                </p>
+                <div class="loss-ratio-card" style="padding: 0 20px;">
+                    <div id="adm-recent-claims-container">
+                        <p style="text-align:center; color:var(--text-light); padding:20px 0; font-size:14px;">
+                            Loading...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <!-- Application Logic -->
     <script>
         // Central API Config
         const API = {
-            BASE_URL: "/api",
+            BASE_URL: "http://127.0.0.1:8000/api",
             LOGIN: "/login",
             REGISTER: "/register",
             PLAN: "/select-plan",
@@ -554,13 +1281,21 @@
             CLAIMS_HISTORY: "/claims",
             PREMIUM: "/premium"
         };
-        
+
         const CITY_LOCATIONS = {
-            "Chennai": ["T. Nagar", "Velachery", "Anna Nagar"],
-            "Mumbai": ["Powai", "BKC", "Andheri"],
-            "Bangalore": ["Whitefield", "Indiranagar", "BTM"],
-            "Madurai": ["KK Nagar", "Mattuthavani"],
-            "Trichy": ["Srirangam", "Thillai Nagar"]
+            "Chennai": ["Velachery", "Anna Nagar", "T. Nagar", "Adyar", "Mylapore", "Tambaram", "Guindy", "Nungambakkam"],
+            "Mumbai": ["Powai", "BKC", "Andheri", "Bandra", "Dadar", "Worli", "Juhu", "Malad", "Colaba"],
+            "Bangalore": ["Whitefield", "Indiranagar", "BTM", "Koramangala", "Jayanagar", "HSR", "Electronic City", "Electronic City", "Bannerghatta"],
+            "Madurai": ["KK Nagar", "Mattuthavani", "Anna Nagar"],
+            "Trichy": ["Srirangam", "Thillai Nagar", "BHEL"]
+        };
+
+        const iconsMap = {
+            'Heavy Rain': '🌧️',
+            'Heatwave': '🔥',
+            'Pollution': '🌫️',
+            'Strike': '✊',
+            'Unknown': '❓'
         };
 
         const APPROVAL_PATTERN = [
@@ -573,23 +1308,25 @@
             { s: 'Rejected', a: 0 }
         ];
 
-        const iconsMap = { 'Heavy Rain': '🌧️', 'Heatwave': '🔥', 'Pollution': '🌫️', 'Strike': '✊' };
+        // iconsMap already defined above
 
         const app = {
             // Extended state structure
             state: {
                 user_id: null,
                 user: null,
+                synced: false,
                 city: null,
                 plan: null,
                 premium: null,
                 plan_start_date: null,
                 isLoggedIn: false,
+                isSubmitting: false,
                 selectedPlanTmp: 'Standard Plan',
                 claims: [],
                 claimCount: 0
             },
-            
+
             async nav(viewId) {
                 document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
                 document.getElementById(`view-${viewId}`).classList.add('active');
@@ -600,22 +1337,184 @@
                     await this.fetchPremium();
                     this.renderDashboard();
                 }
-                if (viewId === 'claim') this.setupClaimForm();
+                if (viewId === 'claim') {
+                    if (!this.state.claims) this.state.claims = [];
+                    this.setupClaimForm();
+                }
                 if (viewId === 'history') {
-                    await this.fetchClaims();
+                    // Only fetch from server if we aren't waiting for a pending submission
+                    // to avoid overwriting the optimistic 'Verifying...' state
+                    if (!this.state.isSubmitting) {
+                        await this.fetchClaims();
+                    }
                     this.renderClaimsHistory();
+                }
+                if (viewId === 'admin') {
+                    if (!this.state.isAdmin) {
+                        this.nav('admin-login');
+                        return;
+                    }
+                    await this.fetchAdminStats();
+                }
+            },
+
+            async adminLogin(e) {
+                e.preventDefault();
+                const formData = new FormData(e.target);
+                const payload = Object.fromEntries(formData.entries());
+                this.showLoader("Authenticating Root Access...");
+
+                try {
+                    const res = await fetch(API.BASE_URL + "/admin/login", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(payload)
+                    });
+                    if (!res.ok) throw new Error("Invalid Admin Identity");
+
+                    this.state.isAdmin = true;
+                    this.state.isLoggedIn = true;
+                    this.state.user = "Chief Risk Officer";
+                    this.hideLoader();
+                    this.nav('admin');
+                } catch (err) {
+                    // Demo offline fallback: accept admin/admin123
+                    if (payload.username === 'admin' && payload.password === 'admin123') {
+                        this.state.isAdmin = true;
+                        this.state.isLoggedIn = true;
+                        this.state.user = "Chief Risk Officer";
+                        this.hideLoader();
+                        this.nav('admin');
+                    } else {
+                        this.hideLoader();
+                        alert('Invalid credentials. (Demo: admin / admin123)');
+                    }
+                }
+            },
+
+            async fetchAdminStats() {
+                const applyStats = (data) => {
+                    document.getElementById('adm-workers-val').innerText = data.total_workers;
+                    document.getElementById('adm-policies-val').innerText = data.active_policies;
+                    document.getElementById('adm-premium-val').innerText = data.premium_collected;
+                    document.getElementById('adm-claims-val').innerText = data.claims_paid;
+
+                    document.getElementById('adm-ratio-val').innerText = data.loss_ratio;
+                    const ratio = parseFloat(data.loss_ratio);
+                    document.getElementById('adm-ratio-fill').style.width = Math.min(100, ratio) + '%';
+
+                    const badge = document.getElementById('adm-status-badge');
+                    if (ratio < 70) {
+                        badge.className = 'risk-badge risk-low';
+                        badge.innerText = '✅ Healthy';
+                        document.getElementById('adm-ratio-fill').style.background = '#10B981';
+                    } else {
+                        badge.className = 'risk-badge risk-high';
+                        badge.innerText = '⚠️ Critical';
+                        document.getElementById('adm-ratio-fill').style.background = '#EF4444';
+                    }
+
+                    document.getElementById('adm-total-claims').innerText = data.approved + data.rejected;
+                    document.getElementById('adm-approved').innerText = data.approved;
+                    document.getElementById('adm-rejected').innerText = data.rejected;
+
+                    const totalPlans = data.active_policies || 1;
+                    document.getElementById('adm-plan-basic').style.width = (data.plans.basic / totalPlans * 100) + '%';
+                    document.getElementById('adm-plan-standard').style.width = (data.plans.standard / totalPlans * 100) + '%';
+                    document.getElementById('adm-plan-premium').style.width = (data.plans.premium / totalPlans * 100) + '%';
+                    document.getElementById('adm-plan-basic-count').innerText = data.plans.basic;
+                    document.getElementById('adm-plan-standard-count').innerText = data.plans.standard;
+                    document.getElementById('adm-plan-premium-count').innerText = data.plans.premium;
+
+                    const predContainer = document.getElementById('adm-predictions-container');
+                    predContainer.innerHTML = data.predictions.map(p => {
+                        const icon = p.condition === 'Heavy Rain' ? '🌧️' : '🔥';
+                        const riskClass = p.risk === 'High' ? 'risk-high' : p.risk === 'Medium' ? 'risk-medium' : 'risk-low';
+                        const bg = p.condition === 'Heavy Rain' ? '#EFF6FF' : '#FFF7ED';
+                        return `
+                        <div class="pred-card" style="background: ${bg}">
+                            <div class="pred-icon" style="background: white;">${icon}</div>
+                            <div style="flex: 1;">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <h4 style="margin: 0; font-size: 14px;">${p.city} — ${p.condition}</h4>
+                                    <span class="risk-badge ${riskClass}">${p.risk}</span>
+                                </div>
+                                <p style="font-size: 11px; color: var(--text-light); margin-top: 4px;">${p.claims_est} • Est. ${p.exposure} exposure</p>
+                                <p style="font-size: 11px; color: var(--text-light); margin-top: 2px;">☂️ ${p.prob} prob • Temp ${p.temp}, AQI ${p.aqi}, ${p.rain}</p>
+                            </div>
+                        </div>`;
+                    }).join('');
+
+                    const claimsContainer = document.getElementById('adm-recent-claims-container');
+                    if (data.recent_claims && data.recent_claims.length > 0) {
+                        claimsContainer.innerHTML = data.recent_claims.map(c => {
+                            const statusColor = c.status === 'Approved' ? '#10B981' : c.status === 'Pending' ? '#F59E0B' : '#EF4444';
+                            return `
+                            <div style="display:flex; align-items:center; padding:14px 0; border-bottom:1px solid #F3F4F6; gap:12px;">
+                                <div style="font-size:22px;">${iconsMap[c.type] || '❓'}</div>
+                                <div style="flex:1;">
+                                    <div style="font-size:14px; font-weight:600; color:var(--text-dark);">${c.name} <span style="font-size:11px; color:var(--text-light); font-weight:400;">• ${c.city}</span></div>
+                                    <div style="font-size:12px; color:var(--text-light); margin-top:2px;">${c.type} • ${new Date(c.datetime).toLocaleDateString('en-IN')}</div>
+                                </div>
+                                <div style="text-align:right;">
+                                    <div style="font-size:14px; font-weight:700; color:${c.status === 'Approved' ? '#10B981' : 'var(--text-light)'};">${c.status === 'Approved' ? '+₹' + c.amount : c.status === 'Pending' ? '⏳' : '✗'}</div>
+                                    <div style="font-size:11px; color:${statusColor}; font-weight:600;">${c.status}</div>
+                                </div>
+                            </div>`;
+                        }).join('');
+                    } else {
+                        claimsContainer.innerHTML = '<p style="text-align:center; color:var(--text-light); padding:20px 0; font-size:14px;">No claims yet.</p>';
+                    }
+                };
+
+                try {
+                    const res = await fetch(API.BASE_URL + "/admin/stats");
+                    if (!res.ok) throw new Error("API fail");
+                    const data = await res.json();
+                    applyStats(data);
+                } catch (err) {
+                    console.warn("Admin API unavailable — running demo mode.");
+                    // Build demo stats from local claims state
+                    const allClaims = this.state.claims || [];
+                    const approved = allClaims.filter(c => c.status === 'Approved');
+                    const rejected = allClaims.filter(c => c.status === 'Rejected');
+                    const paidOut = approved.reduce((s, c) => s + (c.amount || 0), 0);
+                    const premiumCollected = 1300;
+                    const lossRatio = premiumCollected > 0 ? ((paidOut / premiumCollected) * 100).toFixed(1) : '58.9';
+
+                    const demoData = {
+                        total_workers: 24,
+                        active_policies: 18,
+                        premium_collected: '₹1.3k',
+                        claims_paid: '₹7.4k',
+                        loss_ratio: '58.9',
+                        approved: 19,
+                        rejected: 12,
+                        plans: { basic: 5, standard: 9, premium: 4 },
+                        predictions: [
+                            { city: 'Bangalore', condition: 'Heavy Rain', risk: 'Medium', claims_est: '~4 claims', exposure: '₹1,600', prob: '55%', temp: '30°C', aqi: '55', rain: '1.2mm rain' },
+                            { city: 'Chennai', condition: 'Heatwave', risk: 'High', claims_est: '~6 claims', exposure: '₹2,400', prob: '35%', temp: '38°C', aqi: '72', rain: '0mm rain' },
+                            { city: 'Mumbai', condition: 'None', risk: 'Low', claims_est: '~1 claims', exposure: '₹300', prob: '20%', temp: '33°C', aqi: '88', rain: '0mm rain' },
+                            { city: 'Madurai', condition: 'Heatwave', risk: 'High', claims_est: '~3 claims', exposure: '₹1,050', prob: '15%', temp: '42°C', aqi: '60', rain: '0mm rain' }
+                        ],
+                        recent_claims: [
+                            { name: 'Ravi Kumar', city: 'Chennai', type: 'Heatwave', datetime: new Date(Date.now() - 3600000).toISOString(), status: 'Approved', amount: 500 },
+                            { name: 'Priya S.', city: 'Bangalore', type: 'Heavy Rain', datetime: new Date(Date.now() - 7200000).toISOString(), status: 'Approved', amount: 350 },
+                            { name: 'Arjun M.', city: 'Mumbai', type: 'Strike', datetime: new Date(Date.now() - 86400000).toISOString(), status: 'Rejected', amount: 0 },
+                            { name: 'Divya R.', city: 'Madurai', type: 'Heatwave', datetime: new Date(Date.now() - 172800000).toISOString(), status: 'Approved', amount: 500 },
+                            { name: 'Suresh P.', city: 'Chennai', type: 'Heavy Rain', datetime: new Date(Date.now() - 259200000).toISOString(), status: 'Pending', amount: 0 }
+                        ]
+                    };
+                    applyStats(demoData);
                 }
             },
 
             logout() {
                 document.getElementById('avatar-dropdown').classList.remove('show');
-                this.state = { user_id: null, user: null, city: null, plan: null, premium: null, plan_start_date: null, isLoggedIn: false, selectedPlanTmp: 'Standard Plan', claims: [], claimCount: 0 };
+                this.state = { user_id: null, user: null, city: null, plan: null, premium: null, plan_start_date: null, isLoggedIn: false, selectedPlanTmp: 'Standard Plan', claims: [], claimCount: 0, isAdmin: false };
                 // Reset to default avatar
                 document.getElementById('main-avatar').style.backgroundImage = 'none';
                 document.getElementById('dropdown-avatar').style.backgroundImage = 'none';
-                document.getElementById('main-avatar').innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4B5563" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>';
-                document.getElementById('dropdown-avatar').innerHTML = '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#8E8E93" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>';
-                
                 this.nav('login');
             },
 
@@ -637,20 +1536,20 @@
             changeAvatar(input) {
                 if (input.files && input.files[0]) {
                     const reader = new FileReader();
-                    reader.onload = function(e) {
+                    reader.onload = function (e) {
                         const imgUrl = e.target.result;
                         const mainAvatar = document.getElementById('main-avatar');
                         const ddAvatar = document.getElementById('dropdown-avatar');
-                        
+
                         // Clear the SVGs inside
                         mainAvatar.innerHTML = '';
                         ddAvatar.innerHTML = '';
-                        
+
                         // Set background Image
                         const styleStr = `url(${imgUrl})`;
                         mainAvatar.style.backgroundImage = styleStr;
                         mainAvatar.style.borderColor = 'var(--primary)';
-                        
+
                         ddAvatar.style.backgroundImage = styleStr;
                         ddAvatar.style.borderColor = 'var(--primary)';
                     };
@@ -662,19 +1561,48 @@
                 document.getElementById('loader-text').innerText = text;
                 document.getElementById('loader').style.display = 'flex';
             },
-            
+
             hideLoader() {
                 document.getElementById('loader').style.display = 'none';
+            },
+
+            updateZones(city) {
+                const zoneSelect = document.getElementById('reg-zone');
+                const zoneGroup = document.getElementById('zone-group');
+                zoneSelect.innerHTML = '<option value="" disabled selected>Select neighborhood</option>';
+                if (CITY_LOCATIONS[city]) {
+                    CITY_LOCATIONS[city].forEach(z => {
+                        const opt = document.createElement('option');
+                        opt.value = z; opt.innerText = z;
+                        zoneSelect.appendChild(opt);
+                    });
+                    zoneGroup.style.display = 'block';
+                } else {
+                    zoneGroup.style.display = 'none';
+                }
+            },
+
+            syncAccount() {
+                this.showLoader("Authenticating with platform securely...");
+                setTimeout(() => {
+                    this.showLoader("Analyzing last 30 days completed orders & base earnings...");
+                    setTimeout(() => {
+                        this.hideLoader();
+                        this.state.synced = true;
+                        document.getElementById('gig-sync-btn').innerHTML = '<div style="background:#e6f4ea; color:#137333; padding:12px; border-radius:12px; border:1px solid #cce8d6;">✅ <b>Account Synced Successfully</b><br><span style="font-size:12px; font-weight:normal;">Base daily income mapped. You can now purchase your policy.</span></div>';
+                        document.getElementById('activate-plan-btn').style.display = 'block';
+                    }, 2000);
+                }, 1500);
             },
 
             // ===== TEAM 1: AUTH MODULE + POLICY MODULE =====
             async register(e) {
                 e.preventDefault();
                 this.showLoader("Creating account...");
-                
+
                 const formData = new FormData(e.target);
                 const payload = Object.fromEntries(formData.entries());
-                
+
                 try {
                     const res = await fetch(API.BASE_URL + API.REGISTER, {
                         method: "POST",
@@ -682,29 +1610,50 @@
                         body: JSON.stringify(payload)
                     });
                     if (!res.ok) {
-                        const err = await res.json();
-                        throw new Error(err.detail || "API not available");
+                        let msg = "API not available";
+                        try {
+                            const err = await res.json();
+                            msg = err.detail || msg;
+                        } catch (e) { /* not json */ }
+                        throw new Error(msg);
                     }
                     const data = await res.json();
-                    
+
                     this.state.user_id = data.user_id;
                     this.state.user = payload.name;
                     this.state.city = payload.city;
                     this.state.isLoggedIn = true;
-                    
+                    this.state.credibility_score = 80; // new user default
+                    document.getElementById('dash-credibility').innerText = this.state.credibility_score;
+
                     document.getElementById('dash-name').innerText = this.state.user;
                     this.hideLoader();
                     this.nav('dashboard');
                 } catch (err) {
-                    this.hideLoader();
-                    alert("Registration failed: " + err.message);
+                    // Demo offline fallback
+                    const phone = payload.phone || '';
+                    if (/^\d{10}$/.test(phone) && payload.name) {
+                        this.state.user_id = phone;
+                        this.state.user = payload.name;
+                        this.state.city = payload.city || 'Chennai';
+                        this.state.isLoggedIn = true;
+                        this.state.credibility_score = 80;
+                        this.state.claims = [];
+                        document.getElementById('dash-credibility').innerText = this.state.credibility_score;
+                        document.getElementById('dash-name').innerText = this.state.user;
+                        this.hideLoader();
+                        this.nav('dashboard');
+                    } else {
+                        this.hideLoader();
+                        alert("Registration failed: " + err.message);
+                    }
                 }
             },
 
             async login(e) {
                 e.preventDefault();
                 this.showLoader("Checking user...");
-                
+
                 const formData = new FormData(e.target);
                 const payload = Object.fromEntries(formData.entries());
 
@@ -715,27 +1664,52 @@
                         body: JSON.stringify(payload)
                     });
                     if (!res.ok) {
-                        const err = await res.json();
-                        throw new Error(err.detail || "User not registered");
+                        let msg = "User not registered";
+                        try {
+                            const err = await res.json();
+                            msg = err.detail || msg;
+                        } catch (e) { /* not json */ }
+                        throw new Error(msg);
                     }
                     const data = await res.json();
-                    
+
                     this.state.user_id = data.user_id;
                     this.state.user = data.name;
                     this.state.city = data.city;
                     this.state.plan = data.plan;
                     this.state.premium = data.premium;
                     this.state.isLoggedIn = true;
-                    
+                    this.state.credibility_score = data.credibility_score || 80;
+
                     document.getElementById('dash-name').innerText = this.state.user;
-                    if(this.state.plan) {
+                    document.getElementById('dash-credibility').innerText = this.state.credibility_score;
+                    if (this.state.plan) {
                         document.getElementById('dash-plan-name').innerText = this.state.plan;
                     }
                     this.hideLoader();
                     this.nav('dashboard');
                 } catch (err) {
-                    this.hideLoader();
-                    alert("Login failed: " + err.message);
+                    // Demo offline fallback — accept any 10-digit phone
+                    const phone = payload.phone || '';
+                    if (/^\d{10}$/.test(phone)) {
+                        const demoNames = { '9999999999': 'Demo Worker', '8888888888': 'Ravi Kumar' };
+                        this.state.user_id = phone;
+                        this.state.user = demoNames[phone] || 'Demo Worker';
+                        this.state.city = 'Chennai';
+                        this.state.plan = 'Standard Plan';
+                        this.state.premium = 35;
+                        this.state.isLoggedIn = true;
+                        this.state.credibility_score = 80;
+                        this.state.claims = [];
+                        document.getElementById('dash-name').innerText = this.state.user;
+                        document.getElementById('dash-credibility').innerText = this.state.credibility_score;
+                        document.getElementById('dash-plan-name').innerText = this.state.plan;
+                        this.hideLoader();
+                        this.nav('dashboard');
+                    } else {
+                        this.hideLoader();
+                        alert("Login failed: " + err.message);
+                    }
                 }
             },
 
@@ -748,46 +1722,59 @@
             },
 
             async activatePlan() {
-                this.showLoader("Activating policy...");
-                const amountMap = { 'Basic Plan': 20, 'Standard Plan': 35, 'Premium Plan': 50 };
-                const selectedPremium = amountMap[this.state.selectedPlanTmp];
-                
-                const payload = {
-                    user_id: this.state.user_id,
-                    plan: this.state.selectedPlanTmp,
-                    premium: selectedPremium
-                };
+                this.showLoader("Opening Razorpay Gateway...");
 
-                try {
-                    const res = await fetch(API.BASE_URL + API.PLAN, {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify(payload)
-                    });
-                    if (!res.ok) throw new Error("API fail");
-                    
-                    this.state.plan = this.state.selectedPlanTmp;
-                    this.state.premium = selectedPremium;
-                    this.state.plan_start_date = new Date().toISOString();
-                    document.getElementById('dash-plan-name').innerText = this.state.plan;
-                    
-                    this.hideLoader();
-                    this.nav('dashboard');
-                } catch (err) {
-                    this.hideLoader();
-                    alert("Plan activation failed");
-                }
+                // MOCK RAZORPAY FLOW
+                setTimeout(async () => {
+                    const confirmPay = confirm(`Proceed to pay ₹${this.state.premium}/week for ${this.state.selectedPlanTmp}?\n\n[SANDBOX MODE]`);
+                    if (!confirmPay) {
+                        this.hideLoader();
+                        return;
+                    }
+
+                    this.showLoader("Verifying Payment...");
+                    const amountMap = { 'Basic Plan': 20, 'Standard Plan': 35, 'Premium Plan': 50 };
+                    const selectedPremium = amountMap[this.state.selectedPlanTmp];
+
+                    const payload = {
+                        user_id: this.state.user_id,
+                        plan: this.state.selectedPlanTmp,
+                        premium: selectedPremium
+                    };
+
+                    try {
+                        const res = await fetch(API.BASE_URL + API.PLAN, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify(payload)
+                        });
+                        if (!res.ok) throw new Error("API fail");
+
+                        this.state.plan = this.state.selectedPlanTmp;
+                        this.state.premium = selectedPremium;
+                        this.state.plan_start_date = new Date().toISOString();
+
+                        this.showLoader("Policy Issued Successfully! ✅");
+                        setTimeout(() => {
+                            this.hideLoader();
+                            this.nav('dashboard');
+                        }, 1500);
+                    } catch (err) {
+                        this.hideLoader();
+                        alert("Plan activation failed");
+                    }
+                }, 1000);
             },
 
             // ===== TEAM 2: PREMIUM AI MODULE =====
             async fetchPremium() {
                 this.showLoader("Analyzing risk...");
-                
+
                 try {
                     const res = await fetch(API.BASE_URL + API.PREMIUM + "?user_id=" + this.state.user_id);
                     if (!res.ok) throw new Error("API fail");
                     const data = await res.json();
-                    
+
                     // Render premium from backend
                     this.renderDynamicPremium(data);
                     this.hideLoader();
@@ -796,7 +1783,7 @@
                     console.error("Failed to fetch premium from API");
                 }
             },
-            
+
             renderDynamicPremium(data) {
                 const card = document.getElementById('dynamic-premium-card');
                 const priceEl = document.getElementById('dyn-price-display');
@@ -836,7 +1823,7 @@
 
             async submitClaim(e) {
                 e.preventDefault();
-                
+
                 const formData = new FormData(e.target);
                 const payload = Object.fromEntries(formData.entries());
 
@@ -862,13 +1849,36 @@
                     status: 'Pending',
                     amount: 0
                 };
-                
-                // Add to history array sequentially
-                this.state.claims.unshift(newClaim);
 
+                // Optimistically show pending state in history
+                this.state.isSubmitting = true;
+                this.state.claims.unshift(newClaim);
                 this.nav('history');
-                this.showLoader("AI verifying disruption...");
-                
+                this.showLoader("AI Sentinel Verifying Disruption...");
+
+                const applyOutcome = (outcome) => {
+                    this.state.isSubmitting = false;
+                    this.hideLoader();
+                    newClaim.status = outcome.status || 'Approved';
+                    newClaim.reason = outcome.reason || (newClaim.type + ' verified by AI');
+                    this.renderClaimsHistory();
+
+                    if (newClaim.status === 'Approved') {
+                        newClaim.amount = outcome.amount || 0;
+                        this.renderClaimsHistory();
+
+                        document.getElementById('result-reason').innerText = newClaim.reason;
+                        const time = new Date(newClaim.datetime).toLocaleString();
+                        document.getElementById('result-time').innerText = time || 'Just now';
+                        document.getElementById('result-amount').innerText = '₹' + newClaim.amount;
+
+                        document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+                        document.getElementById('view-claim-result').classList.add('active');
+                    } else {
+                        this.nav('history');
+                    }
+                };
+
                 try {
                     const res = await fetch(API.BASE_URL + API.CLAIM, {
                         method: "POST",
@@ -876,50 +1886,42 @@
                         body: JSON.stringify(backendPayload)
                     });
                     if (!res.ok) throw new Error("API fail");
-                    
-                    // Consume the exact JSON object from your friend's backend!
-                    const outcome = await res.json();
-                    
-                    // Proceed with brief AI artificial delay for UX (shows 'verifying' state)
-                    setTimeout(() => {
-                        this.hideLoader();
-                        
-                        // We use the exact status returned from the backend (or default to 'Approved')
-                        newClaim.status = outcome.status || 'Approved';
-                        this.renderClaimsHistory(); 
 
-                        if (newClaim.status === 'Approved') {
-                            newClaim.amount = outcome.amount || 0;
-                            this.renderClaimsHistory(); 
-                            
-                            // Use backend reason or fallback
-                            document.getElementById('result-reason').innerText = outcome.reason || (newClaim.type + ' verified');
-                            const time = new Date(newClaim.datetime).toLocaleString();
-                            document.getElementById('result-time').innerText = time || 'Just now';
-                            document.getElementById('result-amount').innerText = '₹' + newClaim.amount;
-                            
-                            // Navigate to claim success view
-                            document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
-                            document.getElementById('view-claim-result').classList.add('active');
-                            window.scrollTo(0, 0);
-                        } else {
-                            // If backend rejected it, stay on history view showing 'Rejected'
-                            this.nav('history');
-                        }
-                    }, 2500); // 2.5 second AI verification wait time
+                    const outcome = await res.json();
+                    setTimeout(() => applyOutcome(outcome), 2500);
                 } catch (err) {
-                    this.hideLoader();
-                    alert("Claim validation failed. Make sure backend is running.");
+                    // ---- DEMO / OFFLINE FALLBACK ----
+                    console.warn("Backend unavailable — running in demo mode.");
+                    const pattern = APPROVAL_PATTERN[this.state.claims.length % APPROVAL_PATTERN.length];
+                    const reasonMap = {
+                        'Heavy Rain': 'Heavy rainfall (>50mm/24hr) confirmed via Open-Meteo API at your coordinates.',
+                        'Heatwave': 'Sustained temperature >38°C detected by meteorological sensors in your zone.',
+                        'Pollution': 'AQI exceeded 300 threshold — severe pollution event corroborated by CPCB data.',
+                        'Strike': 'Mass protest / traffic disruption confirmed via Google News RSS & crowd density signals.'
+                    };
+                    const rejectReasons = [
+                        'Weather data does not meet threshold criteria at your registered location.',
+                        'No corroborating event signals detected within 5km radius for the reported time window.',
+                        'Claim pattern flagged for manual review by risk engine.'
+                    ];
+                    const demoOutcome = {
+                        status: pattern.s,
+                        amount: pattern.a,
+                        reason: pattern.s === 'Approved'
+                            ? (reasonMap[backendPayload.type] || 'Disruption verified by AI sentinel.')
+                            : rejectReasons[Math.floor(Math.random() * rejectReasons.length)]
+                    };
+                    setTimeout(() => applyOutcome(demoOutcome), 2500);
                 }
             },
 
             // --- VIEW RENDERERS ---
             renderDashboard() {
-                if(this.state.user) document.getElementById('dd-name').innerText = this.state.user;
-                if(this.state.city) document.getElementById('dd-city').innerText = this.state.city;
-                
+                if (this.state.user) document.getElementById('dd-name').innerText = this.state.user;
+                if (this.state.city) document.getElementById('dd-city').innerText = this.state.city;
+
                 const plan = this.state.plan;
-                if(plan) {
+                if (plan) {
                     document.getElementById('dash-plan-name').innerText = plan;
                 }
 
@@ -937,7 +1939,7 @@
                 } else {
                     document.getElementById('dash-validity').innerText = 'No active plan';
                 }
-                
+
                 const badges = {
                     rain: { covered: true },
                     heat: { covered: plan === 'Standard Plan' || plan === 'Premium Plan' },
@@ -986,13 +1988,13 @@
                         // Use Nominatim Reverse Geocoding (Free open-source Maps Data)
                         const res = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`);
                         const data = await res.json();
-                        
+
                         // Extract address parts securely
                         const ad = data.address || {};
                         const road = ad.road || ad.pedestrian || ad.suburb || 'Your Street';
                         const area = ad.neighbourhood || ad.suburb || ad.city_district || ad.city || 'Your Local Area';
                         const zip = ad.postcode || '000000';
-                        
+
                         document.getElementById('claim-street').value = road;
                         document.getElementById('claim-area').value = area;
                         document.getElementById('claim-pincode').value = zip;
@@ -1016,7 +2018,7 @@
             setupClaimForm() {
                 const now = new Date();
                 now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-                document.getElementById('claim-datetime').value = now.toISOString().slice(0,16);
+                document.getElementById('claim-datetime').value = now.toISOString().slice(0, 16);
 
                 const locs = CITY_LOCATIONS[this.state.city] || ["Central Zone"];
                 document.getElementById('claim-area').value = locs[0];
@@ -1035,7 +2037,7 @@
                 const select = document.getElementById('claim-type');
                 select.innerHTML = '<option value="" disabled selected>Select disruption</option>';
                 select.innerHTML += '<option value="Heavy Rain">🌧️ Heavy Rain</option>';
-                
+
                 if (this.state.plan === 'Standard Plan' || this.state.plan === 'Premium Plan') {
                     select.innerHTML += '<option value="Heatwave">🔥 Heatwave</option>';
                     select.innerHTML += '<option value="Strike">✊ Strike / Protest</option>';
@@ -1053,9 +2055,9 @@
                 }
 
                 container.innerHTML = this.state.claims.map(claim => {
-                    const statusColor = claim.status === 'Approved' ? 'var(--secondary)' : 
-                                      claim.status === 'Pending' ? 'var(--warning)' : 
-                                      'var(--danger)';
+                    const statusColor = claim.status === 'Approved' ? 'var(--secondary)' :
+                        claim.status === 'Pending' ? 'var(--warning)' :
+                            'var(--danger)';
                     const amtStr = claim.amount > 0 ? '+₹' + claim.amount : '-';
                     const amtStyle = claim.status === 'Rejected' || claim.status === 'Pending' ? 'color: var(--text-light);' : '';
 
@@ -1088,7 +2090,9 @@
         document.getElementById('form-login').addEventListener('submit', (e) => app.login(e));
         document.getElementById('form-register').addEventListener('submit', (e) => app.register(e));
         document.getElementById('form-claim').addEventListener('submit', (e) => app.submitClaim(e));
+        document.getElementById('form-admin-login').addEventListener('submit', (e) => app.adminLogin(e));
 
     </script>
 </body>
+
 </html>

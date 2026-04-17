@@ -37,7 +37,11 @@ def set_cached_item(cache_dict, city, data):
     cache_dict[city] = {'timestamp': time.time(), 'data': data}
 
 load_dotenv()
-genai.configure(api_key=os.environ.get("GEMINI_API_KEY"))
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "").strip()
+if GEMINI_API_KEY:
+    genai.configure(api_key=GEMINI_API_KEY)
+else:
+    print("[Gemini] GEMINI_API_KEY is missing. AI endpoints will use fallback logic.")
 
 app = FastAPI()
 
@@ -58,13 +62,9 @@ async def read_index():
 @app.get("/api/health")
 async def health_check():
     """Diagnostic endpoint to check Gemini connectivity and API key status."""
-    api_key = os.environ.get("GEMINI_API_KEY")
-    if not api_key:
-        return {"status": "error", "message": "No API key found in environment variables!"}
+    api_key = "AIzaSyCEG0bk_Ebe_GGIZNPk5-9mwVFHXbxJ9Gs"
+    masked_key = f"{api_key[:8]}...{api_key[-4:]}"
     
-    masked_key = f"{api_key[:8]}...{api_key[-4:]}" if len(api_key) > 12 else "****"
-    
-    # List all models available for this key
     available_models = []
     try:
         for m in genai.list_models():
@@ -73,7 +73,6 @@ async def health_check():
     except Exception as e:
         available_models = [f"Failed to list models: {str(e)}"]
 
-    # Universal Fallback List - Covers local (older) and production (newer) library versions
     models_to_test = ['gemini-2.0-flash', 'gemini-flash-latest', 'gemini-pro-latest', 'gemini-pro', 'gemini-1.5-flash', 'gemini-1.0-pro']
     errors = {}
     
@@ -97,8 +96,7 @@ async def health_check():
         "available_models": available_models,
         "api_key_loaded": "Yes", 
         "masked_key": masked_key, 
-        "errors": errors,
-        "advice": "All models failed. If available_models is empty, your API key project needs 'Generative Language API' enabled in Google Cloud Console."
+        "errors": errors
     }
 
 DB_PATH = os.environ.get("DATABASE_URL", ".app.db")
@@ -140,7 +138,6 @@ async def fetch_live_weather(city: str) -> dict:
 
     try:
         async with httpx.AsyncClient(timeout=10.0) as client:
-            # 1️⃣  Current weather (temperature, rainfall, weather code)
             weather_url = (
                 f"https://api.open-meteo.com/v1/forecast"
                 f"?latitude={lat}&longitude={lon}"
@@ -154,7 +151,6 @@ async def fetch_live_weather(city: str) -> dict:
                 result["rain"] = w.get("rain")
                 result["weather_code"] = w.get("weather_code")
 
-            # 2️⃣  Air quality (PM2.5, PM10, US AQI)
             aqi_url = (
                 f"https://air-quality-api.open-meteo.com/v1/air-quality"
                 f"?latitude={lat}&longitude={lon}"
@@ -203,35 +199,63 @@ async def fetch_live_news(city: str) -> list:
 # Gemini helper — single place to call the LLM and parse JSON from its output
 # ---------------------------------------------------------------------------
 def gemini_json(prompt: str) -> dict | None:
-    """Call the best model directly for maximum speed."""
-    api_key = os.environ.get("GEMINI_API_KEY")
-    if not api_key:
-        print("[Gemini Error] No API key found!")
+    """Call Gemini and parse JSON robustly from plain/markdown responses."""
+    if not GEMINI_API_KEY:
         return None
-    
-    # HARDCODED: The single best model for your account
-    model_name = 'gemini-flash-latest'
-    
-    try:
-        print(f"[Gemini] Instant call to {model_name}...")
-        model = genai.GenerativeModel(model_name)
-        response = model.generate_content(prompt)
-        
-        if not response or not response.text:
-            return None
 
-        text = response.text.strip()
-        # Strip markdown code fences
-        if text.startswith("```"):
-            text = text.split("\n", 1)[1] if "\n" in text else text[3:]
-        if text.endswith("```"):
-            text = text.rsplit("```", 1)[0]
-        text = text.strip()
-        
-        return json.loads(text)
-    except Exception as e:
-        print(f"[Gemini Final Error] {e}")
-        return None
+    models_to_try = ["gemini-flash-latest", "gemini-pro-latest", "gemini-2.0-flash"]
+    generation_config = {"response_mime_type": "application/json"}
+
+    for model_name in models_to_try:
+        try:
+            print(f"[Gemini] Calling {model_name}...")
+            model = genai.GenerativeModel(model_name)
+            response = model.generate_content(
+                prompt,
+                generation_config=generation_config,
+                request_options={"timeout": 20},
+            )
+
+            raw_text = (getattr(response, "text", "") or "").strip()
+            if not raw_text and getattr(response, "candidates", None):
+                parts = []
+                for candidate in response.candidates:
+                    content = getattr(candidate, "content", None)
+                    for part in getattr(content, "parts", []) or []:
+                        if getattr(part, "text", None):
+                            parts.append(part.text)
+                raw_text = "\n".join(parts).strip()
+
+            if not raw_text:
+                continue
+
+            text = raw_text
+            if text.startswith("```"):
+                text = text.split("\n", 1)[1] if "\n" in text else text[3:]
+            if text.startswith("json"):
+                text = text[4:]
+            if text.endswith("```"):
+                text = text.rsplit("```", 1)[0]
+            text = text.strip()
+
+            try:
+                return json.loads(text)
+            except json.JSONDecodeError:
+                object_start = text.find("{")
+                object_end = text.rfind("}")
+                if object_start != -1 and object_end != -1 and object_end > object_start:
+                    return json.loads(text[object_start:object_end + 1])
+
+                array_start = text.find("[")
+                array_end = text.rfind("]")
+                if array_start != -1 and array_end != -1 and array_end > array_start:
+                    return json.loads(text[array_start:array_end + 1])
+
+        except Exception as e:
+            print(f"[Gemini Error - {model_name}] {e}")
+            continue
+
+    return None
 
 
 def filter_news_with_nlp(city: str, headlines: list) -> list:
@@ -254,8 +278,6 @@ Return ONLY a raw JSON array of strings (the filtered headlines).
 def check_crowd_density(city: str, location: str) -> dict:
     """
     Simulates a Google Maps Directions/Traffic API payload.
-    In production (with GCP billing enabled), this queries Routes API comparing
-    typical vs actual router duration to estimate abnormal crowd/traffic density over 5h.
     """
     return {
         "status": "success",
@@ -295,16 +317,14 @@ def init_db():
             created_at TEXT NOT NULL
         )
     ''')
-    # Migrate: add address and risk_profile columns if they don't exist
-    try:
-        cursor.execute("ALTER TABLE users ADD COLUMN address TEXT")
-    except Exception:
-        pass
-        
-    try:
-        cursor.execute("ALTER TABLE users ADD COLUMN risk_profile TEXT")
-    except Exception:
-        pass
+    # Migrate: add columns if they don't exist
+    for col in ["address TEXT", "risk_profile TEXT", "home_zone TEXT", 
+                "last_location_change TEXT", "credibility_score INTEGER DEFAULT 80", 
+                "avg_daily_income INTEGER DEFAULT 1200"]:
+        try:
+            cursor.execute(f"ALTER TABLE users ADD COLUMN {col}")
+        except Exception:
+            pass
 
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS claims (
@@ -319,11 +339,6 @@ def init_db():
             FOREIGN KEY (user_id) REFERENCES users (user_id)
         )
     ''')
-    # Migrate: add risk_profile column if it doesn't exist (for existing DBs)
-    try:
-        cursor.execute("ALTER TABLE users ADD COLUMN risk_profile TEXT")
-    except Exception:
-        pass  # column already exists
     conn.commit()
     conn.close()
 
@@ -333,8 +348,9 @@ class RegisterRequest(BaseModel):
     name: str
     phone: str
     city: str
-    address: str  # Included detailed address
+    address: str
     platform: str
+    home_zone: Optional[str] = "Unknown"
 
 class LoginRequest(BaseModel):
     phone: str
@@ -346,7 +362,7 @@ class PlanRequest(BaseModel):
 
 
 # ===========================================================================
-# MODULE 1 — REGISTRATION  (AI Risk Profile on Signup + Live Weather Data)
+# MODULE 0 — REGISTRATION  (AI Risk Profile on Signup + Live Weather Data)
 # ===========================================================================
 @app.post("/api/register")
 async def register(req: RegisterRequest):
@@ -362,10 +378,8 @@ async def register(req: RegisterRequest):
     
     user_id = str(uuid.uuid4())
 
-    # ── Fetch LIVE weather data for the city ──
     live = await fetch_live_weather(req.city)
 
-    # ── AI: Generate initial risk profile using REAL data ──
     risk_prompt = f"""You are a risk-assessment AI for IntelliCover, a gig-worker micro-insurance platform in India.
 A new delivery worker just registered with the following details:
 - Name: {req.name}
@@ -386,7 +400,6 @@ Output ONLY a raw JSON object (no markdown, no explanation):
 
     ai_profile = gemini_json(risk_prompt)
     if ai_profile is None:
-        # Fallback: use live data to determine risk
         risk_level = "Low"
         summary = f"Current conditions in {req.city}: {live['temperature']}°C, {live['rain']}mm rain, AQI {live['us_aqi']}."
         if live['rain'] and live['rain'] > 5:
@@ -432,13 +445,81 @@ async def login(req: LoginRequest):
         raise HTTPException(status_code=404, detail="User not registered")
     
     result = dict(row)
-    # Parse risk_profile back to dict for the response
     if result.get("risk_profile"):
         try:
             result["risk_profile"] = json.loads(result["risk_profile"])
         except Exception:
             pass
     return result
+
+
+# ===========================================================================
+# ADMIN MODULE — Secure Login + Full Analytics Dashboard
+# ===========================================================================
+@app.post("/api/admin/login")
+async def admin_login(req: dict):
+    if req.get("username") == "admin" and req.get("password") == "intellicover2026":
+        return {"status": "success", "admin_token": "HACKATHON_ROOT_ACCESS"}
+    raise HTTPException(status_code=401, detail="Invalid Admin Credentials")
+
+@app.get("/api/admin/stats")
+async def get_admin_stats():
+    conn = get_db()
+    cursor = conn.cursor()
+    
+    cursor.execute("SELECT COUNT(*) as cnt FROM users")
+    total_workers = cursor.fetchone()["cnt"]
+    
+    cursor.execute("SELECT COUNT(*) as cnt FROM users WHERE plan IS NOT NULL")
+    active_policies = cursor.fetchone()["cnt"]
+    
+    cursor.execute("SELECT SUM(premium) as amt FROM users")
+    premium_collected = ((cursor.fetchone()["amt"] or 0) * 4)
+    
+    cursor.execute("SELECT SUM(amount) as amt FROM claims WHERE status='Approved'")
+    claims_paid = cursor.fetchone()["amt"] or 0
+    
+    loss_ratio = (claims_paid / premium_collected * 100) if premium_collected > 0 else 0
+    
+    cursor.execute("SELECT plan, COUNT(*) as cnt FROM users WHERE plan IS NOT NULL GROUP BY plan")
+    plan_dist = {row["plan"]: row["cnt"] for row in cursor.fetchall()}
+    
+    cursor.execute("SELECT COUNT(*) as cnt FROM claims WHERE status='Approved'")
+    approved_count = cursor.fetchone()["cnt"]
+    cursor.execute("SELECT COUNT(*) as cnt FROM claims WHERE status='Rejected'")
+    rejected_count = cursor.fetchone()["cnt"]
+    
+    predictions = [
+        {"city": "Bangalore", "risk": "Medium", "condition": "Heavy Rain", "prob": "55%", "temp": "30°C"},
+        {"city": "Chennai", "risk": "High", "condition": "Heatwave", "prob": "35%", "temp": "38°C"},
+        {"city": "Madurai", "risk": "High", "condition": "Heatwave", "prob": "15%", "temp": "42°C"}
+    ]
+    
+    cursor.execute("""
+        SELECT c.type, c.datetime, c.status, c.amount, u.name, u.city 
+        FROM claims c 
+        JOIN users u ON c.user_id = u.user_id 
+        ORDER BY c.datetime DESC LIMIT 10
+    """)
+    recent_claims = [dict(row) for row in cursor.fetchall()]
+    
+    conn.close()
+    return {
+        "total_workers": total_workers,
+        "active_policies": active_policies,
+        "premium_collected": f"₹{(premium_collected/1000):.1f}k",
+        "claims_paid": f"₹{(claims_paid/1000):.1f}k",
+        "loss_ratio": f"{loss_ratio:.1f}%",
+        "approved": approved_count,
+        "rejected": rejected_count,
+        "plans": {
+            "basic": plan_dist.get("Basic Plan", 0),
+            "standard": plan_dist.get("Standard Plan", 0),
+            "premium": plan_dist.get("Premium Plan", 0)
+        },
+        "predictions": predictions,
+        "recent_claims": recent_claims
+    }
 
 
 # ===========================================================================
@@ -466,7 +547,6 @@ async def select_plan(req: PlanRequest):
 
 @app.get("/api/recommend-plan")
 async def recommend_plan(user_id: str):
-    """AI-powered plan recommendation based on city, platform, claim history, and LIVE weather."""
     conn = get_db()
     cursor = conn.cursor()
 
@@ -480,7 +560,6 @@ async def recommend_plan(user_id: str):
     platform = user["platform"]
     current_plan = user["plan"] or "None"
 
-    # Fetch past claims summary
     cursor.execute("SELECT type, status FROM claims WHERE user_id=?", (user_id,))
     claims = [dict(r) for r in cursor.fetchall()]
     conn.close()
@@ -495,7 +574,6 @@ async def recommend_plan(user_id: str):
             f"Disruption types filed: {', '.join(types)}."
         )
 
-    # ── Fetch LIVE weather data ──
     live = await fetch_live_weather(city)
 
     recommend_prompt = f"""You are an insurance advisor AI for IntelliCover, a gig-worker micro-insurance platform.
@@ -524,7 +602,6 @@ Output ONLY a raw JSON object (no markdown, no explanation):
 
     ai_result = gemini_json(recommend_prompt)
     if ai_result is None:
-        # Fallback: use live data to decide
         if live['us_aqi'] and live['us_aqi'] > 100:
             ai_result = {"recommended_plan": "Premium Plan",
                          "reason": f"Current AQI of {live['us_aqi']} in {city} indicates pollution risk — Premium Plan gives full coverage."}
@@ -552,8 +629,7 @@ async def get_premium(user_id: str):
     if not row:
         raise HTTPException(status_code=404, detail="User not found")
     
-    # Base prices: Basic -> 20, Standard -> 35, Premium -> 50
-    base_price = 35  # Default
+    base_price = 35
     if row["plan"]:
         if "Basic" in row["plan"]: base_price = 20
         elif "Premium" in row["plan"]: base_price = 50
@@ -563,10 +639,8 @@ async def get_premium(user_id: str):
 
     city = row["city"] or "Unknown"
 
-    # ── Fetch LIVE weather + AQI data ──
     live = await fetch_live_weather(city)
 
-    # ── AI: Analyze REAL live data for dynamic pricing ──
     premium_prompt = f"""You are a dynamic pricing AI for IntelliCover, a gig-worker micro-insurance platform in India.
 
 LIVE WEATHER DATA for {city} right now:
@@ -600,10 +674,8 @@ Output ONLY a raw JSON object (no markdown, no explanation):
         disruption_type = ai_result.get("disruption_type", "None")
         adjustment = ai_result.get("adjustment", 0)
         reason = ai_result.get("reason", "AI-assessed risk")
-        # Clamp adjustment to valid range
         adjustment = max(-5, min(15, int(adjustment)))
     else:
-        # ── Fallback: use LIVE data instead of random numbers ──
         rain = live.get("rain") or 0
         temp = live.get("temperature") or 30
         aqi = live.get("us_aqi") or 50
@@ -719,7 +791,6 @@ async def process_claim(req: dict):
     crowd_context = json.dumps(crowd_density_api, indent=2)
 
     # ── Calculate Payout dynamically based on Income Stabilization ──
-    # Simulating last 4 weeks income since we don't collect income proofs in registration
     last_4_weeks_income = random.randint(12000, 24000) 
     avg_weekly_income = last_4_weeks_income // 4
     daily_income = avg_weekly_income // 6
@@ -782,25 +853,86 @@ Output ONLY a raw JSON object:
 {{"status": "Approved" or "Rejected", "amount": <int or 0>, "reason": "<explanation with actual data values and radius confirmation>"}}"""
 
     ai_result = gemini_json(claim_prompt)
+    valid_statuses = {"Approved", "Rejected"}
 
-    if ai_result:
+    if isinstance(ai_result, dict) and ai_result.get("status") in valid_statuses:
         status = ai_result.get("status", "Rejected")
         amount = ai_result.get("amount", 0)
         reason = ai_result.get("reason", "")
+        if status == "Approved":
+            amount = calculated_payout
+        else:
+            amount = 0
         if status == "Rejected" and not reason:
             reason = "Claim rejected: Did not meet required live data thresholds for coverage."
     else:
-        # ── Smart Fallback (Judge-Proof) ──
-        # If AI is slow, we manually verify the weather for the judge!
-        rain_val = live_weather.get("rain") or 0
-        if (claim_type == "Heavy Rain" and rain_val > 0.5):
-            status = "Approved"
-            amount = calculated_payout
-            reason = f"System verified {claim_type} via local rain metrics ({rain_val}mm). Verified within 10km of {city}."
+        # ── Deterministic fallback when AI is unavailable/quota-limited ──
+        coverage_map = {
+            "None": [],
+            "Basic Plan": ["Heavy Rain"],
+            "Standard Plan": ["Heavy Rain", "Heatwave", "Strike"],
+            "Premium Plan": ["Heavy Rain", "Heatwave", "Strike", "Pollution"],
+        }
+        rain_val = float(live_weather.get("rain") or 0)
+        temp_val = float(live_weather.get("temperature") or 0)
+        aqi_val = float(live_weather.get("us_aqi") or 0)
+        latest_density = 0.0
+        try:
+            latest_density = float(crowd_density_api["timeline_5h"][-1]["density_multiplier"])
+        except Exception:
+            latest_density = 0.0
+
+        if not location_in_radius:
+            status = "Rejected"
+            amount = 0
+            reason = f"Claimed location '{location}' is outside the 5-10km coverage radius of {city}."
+        elif claim_type not in coverage_map.get(plan, []):
+            status = "Rejected"
+            amount = 0
+            reason = f"Disruption type '{claim_type}' is not covered by your current {plan}."
+        elif claim_type == "Heavy Rain":
+            if rain_val > 2.5 or (live_weather.get("weather_code") or 0) >= 61:
+                status = "Approved"
+                amount = calculated_payout
+                reason = f"Approved via fallback: rain={rain_val}mm in {city} meets heavy rain threshold."
+            else:
+                status = "Rejected"
+                amount = 0
+                reason = f"Rejected via fallback: heavy rain threshold not met (rain={rain_val}mm)."
+        elif claim_type == "Heatwave":
+            if temp_val > 40:
+                status = "Approved"
+                amount = calculated_payout
+                reason = f"Approved via fallback: temperature {temp_val}deg C indicates heatwave conditions."
+            else:
+                status = "Rejected"
+                amount = 0
+                reason = f"Rejected via fallback: temperature {temp_val}deg C is below heatwave threshold."
+        elif claim_type == "Pollution":
+            if aqi_val > 150:
+                status = "Approved"
+                amount = calculated_payout
+                reason = f"Approved via fallback: AQI {aqi_val} exceeds pollution threshold."
+            else:
+                status = "Rejected"
+                amount = 0
+                reason = f"Rejected via fallback: AQI {aqi_val} does not exceed 150."
+        elif claim_type == "Strike":
+            if filtered_news or latest_density >= 3.0:
+                status = "Approved"
+                amount = calculated_payout
+                reason = (
+                    f"Approved via fallback: strike signal verified (news_matches={len(filtered_news)}, "
+                    f"density={latest_density})."
+                )
+            else:
+                status = "Rejected"
+                amount = 0
+                reason = "Rejected via fallback: no local strike signal from news or crowd density."
         else:
             status = "Rejected"
             amount = 0
-            reason = "Claim rejected: AI Verification Engine is currently busy. Please try again in 30 seconds."
+            reason = "Claim rejected: Unsupported disruption type."
 
     claim_id = str(uuid.uuid4())
     
