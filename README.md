@@ -1,4 +1,4 @@
-# Intellicover
+# INTELLICOVER (this is the correct try it out link : https://intellicover.onrender.com we uploaded the previous versions link in the submission , we are sincerely sorry about it )
 Description
 
 IntelliCover is an AI-powered parametric insurance platform designed for food delivery partners. It uses real-time environmental data and automated triggers to protect gig workers from income loss caused by external disruptions such as extreme weather conditions.
