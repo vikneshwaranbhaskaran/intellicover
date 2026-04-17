@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+google-generativeai
+python-dotenv
+pydantic
+httpx
+scikit-learn
+numpy
+pandas
+geopy
+requests
